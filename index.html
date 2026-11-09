@@ -1,0 +1,2614 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1c3fa8">
+<meta name="description" content="Recetario familiar: recetas probadas y por probar, modo cocina, menú semanal y lista de la compra.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Recetario">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Recetario da Casa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Young+Serif&display=swap">
+<style>
+/* Layout: una sola columna tipo app móvil; cabecera fija con cenefa de loza azul, lista de fichas, hojas inferiores para acciones, modo cocina a pantalla completa */
+:root{
+  --bg:#f5f7fc; --surface:#ffffff; --surface-2:#edf1f9; --ink:#15203b; --ink-2:#4b5675; --line:#d9dfec;
+  --cobalt:#1c3fa8; --cobalt-ink:#ffffff; --cobalt-soft:#e2e9fb;
+  --ok:#2c7a4c; --ok-soft:#e0f1e6; --wait:#9a6300; --wait-soft:#fbedd2; --danger:#b3261e; --star:#d89a00;
+  --shadow:0 1px 2px rgba(21,32,59,.06),0 6px 20px rgba(21,32,59,.07);
+  --f-display:"Young Serif",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r:14px; --hb:0px;
+}
+html.embedded{--hb:56px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1221; --surface:#151c30; --surface-2:#1c2540; --ink:#e8ecf7; --ink-2:#a6b0ca; --line:#29334f;
+  --cobalt:#8ea8ff; --cobalt-ink:#0d1221; --cobalt-soft:#1e2a52;
+  --ok:#7ed1a0; --ok-soft:#14301f; --wait:#f0c264; --wait-soft:#372b10; --danger:#ff8a80; --star:#f3c14e;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0d1221; --surface:#151c30; --surface-2:#1c2540; --ink:#e8ecf7; --ink-2:#a6b0ca; --line:#29334f;
+  --cobalt:#8ea8ff; --cobalt-ink:#0d1221; --cobalt-soft:#1e2a52;
+  --ok:#7ed1a0; --ok-soft:#14301f; --wait:#f0c264; --wait-soft:#372b10; --danger:#ff8a80; --star:#f3c14e;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 calc(120px + var(--hb))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+#view{max-width:720px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;margin:0;letter-spacing:-.005em}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+a{color:var(--cobalt)}
+.muted{color:var(--ink-2)}
+.small{font-size:.875rem}
+.lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);font-weight:700}
+
+/* Cabecera */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 10px;display:flex;align-items:center;gap:10px}
+.brand{display:flex;flex-direction:column;flex:1;min-width:0}
+.brand h1{font-size:1.65rem;color:var(--cobalt);line-height:1.1}
+.brand span{font-size:.8rem;color:var(--ink-2)}
+.cenefa{height:8px;margin:0 0 12px;border-radius:2px;
+  background:
+   radial-gradient(circle at 6px 4px,var(--cobalt) 2.2px,transparent 2.6px) 0 0/12px 8px,
+   linear-gradient(var(--cobalt),var(--cobalt)) 0 0/100% 1px no-repeat,
+   linear-gradient(var(--cobalt),var(--cobalt)) 0 100%/100% 1px no-repeat;opacity:.85}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:inline-grid;place-items:center;flex:none}
+.iconbtn svg{width:22px;height:22px}
+.textbtn{border:0;background:none;color:var(--cobalt);font-weight:700;padding:10px 4px;display:inline-flex;align-items:center;gap:4px}
+
+/* Buscador y pestañas */
+.search{position:relative;margin-bottom:10px}
+.search input{width:100%;height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface);padding:0 14px 0 42px}
+.search svg{position:absolute;left:13px;top:13px;width:22px;height:22px;color:var(--ink-2)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--surface-2);border-radius:12px;padding:4px;margin-bottom:10px}
+.tabs button{border:0;background:none;border-radius:9px;padding:8px 2px;font-size:.84rem;font-weight:700;color:var(--ink-2);line-height:1.2}
+.tabs button b{display:block;font-family:var(--f-display);font-weight:400;font-size:1.05rem;color:var(--ink)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--cobalt);box-shadow:var(--shadow)}
+.tabs button[aria-selected="true"] b{color:var(--cobalt)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.88rem}
+.chip[aria-pressed="true"]{background:var(--cobalt);color:var(--cobalt-ink);border-color:var(--cobalt)}
+.sortrow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0 8px}
+.sortrow select{border:0;background:none;color:var(--cobalt);font-weight:700;padding:6px 0}
+
+/* Fichas */
+.cards{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.card{display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;box-shadow:var(--shadow)}
+.thumb{width:76px;height:76px;border-radius:10px;object-fit:cover;background:var(--cobalt-soft);display:grid;place-items:center;font-family:var(--f-display);font-size:1.8rem;color:var(--cobalt);overflow:hidden}
+.card .t{font-family:var(--f-display);font-size:1.08rem;line-height:1.25;margin-bottom:4px;overflow-wrap:anywhere}
+.card .m{font-size:.84rem;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 9px;font-size:.78rem;font-weight:700}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.wait{background:var(--wait-soft);color:var(--wait)}
+.fav{color:var(--danger)}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r);padding:22px 18px;text-align:left}
+.empty h2{font-size:1.35rem;margin-bottom:6px}
+.empty ul{padding-left:18px;margin:10px 0 16px;color:var(--ink-2)}
+.row-btns{display:flex;gap:8px;flex-wrap:wrap}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 16px;font-weight:700;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{background:var(--cobalt);border-color:var(--cobalt);color:var(--cobalt-ink)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn.danger{color:var(--danger)}
+.btn.block{width:100%}
+.btn:disabled{opacity:.55}
+.fab{position:fixed;z-index:6;right:max(16px,calc(env(safe-area-inset-right,0px) + 16px));bottom:calc(18px + env(safe-area-inset-bottom,0px) + var(--hb));
+  border:0;border-radius:16px;background:var(--cobalt);color:var(--cobalt-ink);font-weight:700;padding:15px 20px;box-shadow:0 6px 20px rgba(28,63,168,.35);display:flex;align-items:center;gap:8px}
+.fab svg{width:20px;height:20px}
+
+/* Detalle */
+.hero{width:100%;aspect-ratio:4/3;max-width:100%;object-fit:cover;border-radius:var(--r);background:var(--surface-2);display:block}
+.dhead{display:flex;flex-direction:column;gap:8px;margin:14px 0 12px}
+.dhead h1{font-size:clamp(1.6rem,6vw,2.2rem);line-height:1.12;overflow-wrap:anywhere}
+.dhead p{margin:0;color:var(--ink-2);max-width:65ch}
+.src{font-size:.88rem;color:var(--ink-2);overflow-wrap:anywhere}
+.metas{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.metas div{background:var(--surface);padding:9px 6px;text-align:center}
+.metas b{display:block;font-family:var(--f-display);font-weight:400;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.metas span{font-size:.72rem;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.panel h2{font-size:1.3rem}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.stepper button{width:42px;height:40px;border:0;background:var(--surface-2);font-size:1.2rem;font-weight:700}
+.stepper output{min-width:96px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;font-size:.92rem}
+.ings{list-style:none;margin:0;padding:0}
+.ings .grp{font-family:var(--f-display);font-size:1rem;color:var(--cobalt);padding:10px 0 2px}
+.ing{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line)}
+.ing:last-child{border-bottom:0}
+.ing input{width:20px;height:20px;accent-color:var(--cobalt);transform:translateY(3px)}
+.ing .q{font-weight:700;font-variant-numeric:tabular-nums;text-align:right;color:var(--cobalt)}
+.ing .n{min-width:0;overflow-wrap:anywhere}
+.ing.done .n,.ing.done .q{text-decoration:line-through;opacity:.5}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.steps li{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.steps li:last-child{border-bottom:0}
+.steps li::before{counter-increment:s;content:counter(s);width:30px;height:30px;border-radius:50%;background:var(--cobalt-soft);color:var(--cobalt);display:grid;place-items:center;font-family:var(--f-display)}
+.steps p{margin:0;min-width:0;overflow-wrap:anywhere}
+.tchip{margin-top:6px;border:1px solid var(--cobalt);color:var(--cobalt);background:none;border-radius:999px;padding:4px 12px;font-size:.85rem;font-weight:700;display:inline-flex;gap:6px;align-items:center}
+.stars{display:inline-flex;gap:2px}
+.stars button{border:0;background:none;font-size:1.7rem;line-height:1;padding:2px;color:var(--line)}
+.stars button.on{color:var(--star)}
+.starline{color:var(--star);letter-spacing:1px}
+.votes{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.vote{display:flex;align-items:center;gap:8px;font-size:.92rem}
+.vote img{width:24px;height:24px;border-radius:50%}
+.tried{display:flex;flex-direction:column;gap:10px}
+.notes{white-space:pre-wrap;margin:0;overflow-wrap:anywhere}
+.cookbar{position:fixed;z-index:6;left:0;right:0;bottom:0;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px) + var(--hb)) max(16px,env(safe-area-inset-left,0px));background:linear-gradient(transparent,var(--bg) 30%)}
+.cookbar .btn{max-width:720px;margin:0 auto;display:flex;width:100%;font-size:1.05rem}
+
+/* Editor */
+.form{display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field input,.field select,.field textarea,.irow input,.prow textarea,.prow input{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;min-height:44px}
+.field textarea{min-height:90px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--surface-2);border-radius:12px;padding:4px}
+.seg button{border:0;background:none;border-radius:9px;padding:10px;font-weight:700;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--cobalt);box-shadow:var(--shadow)}
+.irow{display:grid;grid-template-columns:70px 78px 1fr 40px;gap:6px;align-items:start;padding:8px 0;border-bottom:1px solid var(--line)}
+.irow .i-nota{grid-column:1/4;min-height:38px;font-size:.9rem}
+.irow.grp{grid-template-columns:1fr 40px}
+.irow.grp input{font-family:var(--f-display);color:var(--cobalt)}
+.prow{display:grid;grid-template-columns:1fr 40px;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
+.prow textarea{min-height:70px;resize:vertical}
+.prow .tmin{grid-column:1/2;display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--ink-2)}
+.prow .tmin input{width:90px;min-height:38px}
+.del{width:40px;height:44px;border:0;background:none;color:var(--danger);font-size:1.3rem}
+.photos{display:flex;gap:8px;flex-wrap:wrap}
+.ph{position:relative;width:96px;height:96px}
+.ph img{width:96px;height:96px;object-fit:cover;border-radius:10px}
+.ph button{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff}
+.ph em{position:absolute;left:4px;bottom:4px;font-style:normal;font-size:.7rem;background:var(--cobalt);color:var(--cobalt-ink);border-radius:6px;padding:1px 6px}
+.addph{width:96px;height:96px;border:1px dashed var(--line);border-radius:10px;display:grid;place-items:center;text-align:center;font-size:.8rem;color:var(--ink-2);background:var(--surface);cursor:pointer}
+.addph input{display:none}
+.savebar{position:sticky;bottom:0;display:flex;gap:8px;padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px) + var(--hb));background:linear-gradient(transparent,var(--bg) 25%)}
+.savebar .btn{flex:1}
+
+/* Hojas inferiores */
+.sheet{max-width:680px;margin:0 auto;padding-block:0 calc(160px + env(safe-area-inset-bottom,0px))}
+.sheethead{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;align-items:center;padding-block:10px 6px}
+.sheet .inner{display:flex;flex-direction:column;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.sheet h2{font-size:1.4rem}
+.menu{display:flex;flex-direction:column}
+.menu button{border:0;border-bottom:1px solid var(--line);background:none;text-align:left;padding:14px 4px;font-weight:700;display:flex;flex-direction:column}
+.menu button span{font-weight:400;font-size:.86rem;color:var(--ink-2)}
+.menu button:last-child{border-bottom:0}
+.hint{font-size:.86rem;color:var(--ink-2);margin:0}
+pre.prompt{white-space:pre-wrap;background:var(--surface-2);border-radius:10px;padding:12px;font-size:.8rem;max-height:40dvh;overflow:auto;margin:0;overflow-wrap:anywhere}
+.status{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:var(--cobalt-soft);color:var(--cobalt);font-weight:700}
+.spin{width:18px;height:18px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:sp 0.8s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.err{color:var(--danger);font-weight:700;margin:0}
+.prev{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.prev label{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:10px}
+.prev input{width:20px;height:20px;accent-color:var(--cobalt);flex:none;margin-top:2px}
+.warn{color:var(--wait);font-size:.84rem;font-weight:700}
+
+/* Modo cocina */
+.cook{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;
+  padding:calc(10px + env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px))}
+.cook .ctop{display:flex;align-items:center;gap:10px}
+.cook .ctop h2{flex:1;font-size:1.1rem;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{height:4px;background:var(--surface-2);border-radius:2px;margin:10px 0 0;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--cobalt)}
+.cbody{flex:1;overflow-y:auto;display:flex;flex-direction:column;justify-content:flex-start;gap:16px;padding:24px 0 160px;max-width:720px;width:100%;margin:0 auto}
+.cbody .num{font-family:var(--f-display);color:var(--cobalt);font-size:1.1rem}
+.cbody .txt{font-size:clamp(1.35rem,5.6vw,2rem);line-height:1.38;margin:0;overflow-wrap:anywhere}
+.cnav{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;max-width:720px;width:100%;margin:0 auto}
+.cnav .btn{min-height:58px;font-size:1.05rem}
+.cings{max-height:45dvh;overflow:auto}
+
+/* Temporizadores y avisos */
+.timers{position:fixed;z-index:25;left:max(16px,calc(env(safe-area-inset-left,0px) + 16px));bottom:calc(84px + env(safe-area-inset-bottom,0px) + var(--hb));display:flex;flex-direction:column;gap:6px;max-width:calc(100% - 32px)}
+.timer{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 8px 8px 14px;box-shadow:var(--shadow)}
+.timer b{font-variant-numeric:tabular-nums;font-size:1.15rem}
+.timer span{font-size:.82rem;opacity:.85;max-width:44vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer button{border:0;background:rgba(255,255,255,.18);color:inherit;border-radius:8px;padding:6px 10px;font-weight:700}
+.timer.done{background:var(--danger);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.03)}}
+.toast{position:fixed;z-index:40;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px) + var(--hb));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:700;max-width:calc(100% - 32px);text-align:center}
+/* Fotos de los pasos */
+.prow .pmedia{grid-column:1/2}
+.pmedia{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pmedia:empty{display:none}
+.mbtn{border:1px dashed var(--line);border-radius:10px;padding:8px 12px;font-weight:700;font-size:.88rem;color:var(--cobalt);background:var(--surface);cursor:pointer;min-height:40px;display:inline-flex;align-items:center}
+.mbtn input{display:none}
+.ph.sm,.ph.sm img{width:72px;height:72px}
+.steps li > div{min-width:0}
+.stepimg{display:block;width:100%;max-width:100%;max-height:360px;object-fit:cover;border-radius:10px;margin-top:8px;background:var(--surface-2)}
+.cbody .stepimg{max-height:36dvh;object-fit:contain}
+.gallery{display:flex;gap:6px;overflow-x:auto;margin-top:8px;scrollbar-width:none}
+.gallery button{border:0;padding:0;background:none;flex:none;border-radius:8px}
+.gallery img{width:64px;height:64px;object-fit:cover;border-radius:8px;display:block}
+/* Menú semanal */
+.iconbtn.wide{width:auto;padding:0 12px;gap:6px;display:inline-flex;align-items:center;font-weight:700;color:var(--cobalt)}
+.iconbtn.wide svg{width:20px;height:20px}
+.slotgrid{display:grid;grid-template-columns:1fr 104px 104px;gap:6px 8px;align-items:center;margin-top:6px}
+.slotgrid .dname{font-weight:700}
+.tg{min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:.86rem;color:var(--ink-2)}
+.tg:not(.off){background:var(--cobalt-soft);border-color:transparent;color:var(--cobalt)}
+.slot .lbl .pp{display:block;text-transform:none;letter-spacing:0;font-weight:400;font-size:.78rem;margin-top:2px}
+.check{display:flex;gap:10px;align-items:center;font-weight:700}
+.check input{width:20px;height:20px;accent-color:var(--cobalt);flex:none}
+.week{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px 4px}
+.day.today{border-color:var(--cobalt);box-shadow:0 0 0 1px var(--cobalt)}
+.day h3{font-size:1.15rem;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.day h3 .small{font-family:var(--f-body)}
+.slot{display:grid;grid-template-columns:62px 1fr 40px;gap:8px;align-items:start;padding:10px 0;border-top:1px solid var(--line)}
+.slot .lbl{padding-top:4px}
+.dish{min-width:0}
+.dishbtn{border:0;background:none;padding:0;text-align:left;font-family:var(--f-display);font-size:1.05rem;color:var(--cobalt);line-height:1.3;overflow-wrap:anywhere}
+.dishname{font-family:var(--f-display);font-size:1.05rem;line-height:1.3;overflow-wrap:anywhere}
+.pills{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:5px}
+.pill.batch{background:var(--cobalt-soft);color:var(--cobalt)}
+.pill.idea,.pill.left{background:var(--surface-2);color:var(--ink-2)}
+.gtag{font-size:.78rem;color:var(--ink-2);padding:2px 2px}
+.iconbtn.sm{width:40px;height:40px;border-radius:10px}
+.iconbtn.sm svg{width:18px;height:18px}
+.bal{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.bal .b{border-radius:10px;padding:8px 4px;text-align:center;display:flex;flex-direction:column;gap:1px;min-width:0}
+.bal .b.ok{background:var(--ok-soft);color:var(--ok)}
+.bal .b.wait{background:var(--wait-soft);color:var(--wait)}
+.bal b{font-family:var(--f-display);font-weight:400;font-size:1.5rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.bal span{font-weight:700;font-size:.8rem}
+.bal small{font-size:.7rem;line-height:1.25}
+@media (max-width:370px){.bal{grid-template-columns:repeat(2,1fr)}}
+.linkbtn{border:0;background:none;color:var(--cobalt);font-weight:700;padding:0 2px;font-size:.88rem;text-decoration:underline}
+ul.plain{margin:0;padding-left:18px;color:var(--ink-2);font-size:.92rem}
+.menu.pick{max-height:34dvh;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:0 10px}
+.inp{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px;background:var(--surface)}
+@media (prefers-reduced-motion: reduce){.spin,.timer.done{animation:none}}
+@media (min-width:600px){.card{grid-template-columns:96px 1fr}.thumb{width:96px;height:96px}}
+</style>
+</head>
+<body>
+
+<main id="view" aria-live="polite"></main>
+<div id="timers" class="timers"></div>
+<div id="overlay"></div>
+<div id="toast" class="toast" hidden></div>
+<datalist id="units"><option value="g"><option value="kg"><option value="ml"><option value="l"><option value="cdta"><option value="cda"><option value="taza"><option value="ud"><option value="pizca"><option value="al gusto"></datalist>
+
+<script>
+/* CONFIGURACIÓN: pega entre las comillas la "App key" de tu app de Dropbox */
+window.RECETARIO_DROPBOX_KEY = "";
+</script>
+<script>
+/* Recetario da Casa · versión independiente
+   Datos en el propio móvil (IndexedDB). IA opcional con clave propia. */
+"use strict";
+(function(){
+  const DBNAME = window.__dbName || "recetario-da-casa";
+  let dbp = null;
+  function idb(){
+    if (dbp) return dbp;
+    dbp = new Promise((res, rej) => {
+      const r = indexedDB.open(DBNAME, 1);
+      r.onupgradeneeded = () => { const d = r.result; d.createObjectStore("docs"); d.createObjectStore("blobs"); };
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+    return dbp;
+  }
+  async function idbAll(store){
+    const d = await idb();
+    return new Promise((res, rej) => {
+      const out = {}; const c = d.transaction(store).objectStore(store).openCursor();
+      c.onsuccess = () => { const cur = c.result; if (cur){ out[cur.key] = cur.value; cur.continue(); } else res(out); };
+      c.onerror = () => rej(c.error);
+    });
+  }
+  async function idbPut(store, key, val){
+    const d = await idb();
+    return new Promise((res, rej) => { const t = d.transaction(store, "readwrite"); t.objectStore(store).put(val, key); t.oncomplete = () => res(); t.onerror = () => rej(t.error); });
+  }
+  async function idbDel(store, key){
+    const d = await idb();
+    return new Promise((res, rej) => { const t = d.transaction(store, "readwrite"); t.objectStore(store).delete(key); t.oncomplete = () => res(); t.onerror = () => rej(t.error); });
+  }
+  const rid = (n=20) => { const a = new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a, b => "abcdefghijklmnopqrstuvwxyz0123456789"[b % 36]).join(""); };
+  const clone = o => JSON.parse(JSON.stringify(o));
+
+  /* ---- Base de datos local con la misma forma que usa la app ---- */
+  const docs = new Map(), subs = new Set();
+  const meta = {fromCache: false, hasPendingWrites: false};
+  function snapDoc(path){ const d = docs.get(path); return {id: path.split("/").pop(), exists: !!d, data: () => d ? clone(d) : undefined, metadata: meta}; }
+  function snapCol(col){
+    const out = [];
+    for (const p of docs.keys()) if (p.slice(0, p.lastIndexOf("/")) === col) out.push(snapDoc(p));
+    out.sort((a, b) => a.id.localeCompare(b.id));
+    return {docs: out, size: out.length, empty: !out.length, docChanges: () => [], metadata: meta};
+  }
+  function notify(path){
+    const col = path.slice(0, path.lastIndexOf("/"));
+    subs.forEach(s => { try {
+      if (s.type === "doc" && s.path === path) s.fn(snapDoc(path));
+      if (s.type === "col" && s.path === col) s.fn(snapCol(col));
+    } catch(e){ console.error(e); } });
+  }
+  function merge(a, b){
+    const o = {...a};
+    for (const k of Object.keys(b)){
+      const v = b[k];
+      o[k] = v && typeof v === "object" && !Array.isArray(v) && o[k] && typeof o[k] === "object" && !Array.isArray(o[k]) ? merge(o[k], v) : v;
+    }
+    return o;
+  }
+  const TOMB = "__meta/tomb";
+  let tomb = {};
+  async function write(path, data){
+    const now = Date.now();
+    if (data === null){ docs.delete(path); tomb[path] = now; notify(path); await idbDel("docs", path); await idbPut("docs", TOMB, tomb); }
+    else {
+      data._mod = now; docs.set(path, data); notify(path); await idbPut("docs", path, data);
+      if (tomb[path]){ delete tomb[path]; await idbPut("docs", TOMB, tomb); }
+    }
+    SYNC.later();
+  }
+  function notifyAll(){ subs.forEach(s => { try { s.fn(s.type === "col" ? snapCol(s.path) : snapDoc(s.path)); } catch(e){ console.error(e); } }); }
+  let ready = null;
+  function docRef(path){
+    return {id: path.split("/").pop(), path,
+      get: async () => { await ready; return snapDoc(path); },
+      set: async d => { await ready; await write(path, clone(d)); },
+      update: async d => { await ready; const cur = docs.get(path); if (!cur) throw {code: "invalid_argument", message: "no existe"}; await write(path, merge(cur, clone(d))); },
+      delete: async () => { await ready; await write(path, null); },
+      onSnapshot(fn){ const s = {type: "doc", path, fn}; subs.add(s); ready.then(() => subs.has(s) && fn(snapDoc(path))); return () => subs.delete(s); },
+      collection: sub => colRef(path + "/" + sub)};
+  }
+  function colRef(path){
+    const q = {path,
+      doc: id => docRef(path + "/" + (id || rid())),
+      add: async d => { const r = docRef(path + "/" + rid()); await r.set(d); return r; },
+      get: async () => { await ready; return snapCol(path); },
+      onSnapshot(fn){ const s = {type: "col", path, fn}; subs.add(s); ready.then(() => subs.has(s) && fn(snapCol(path))); return () => subs.delete(s); },
+      where(){ return q; }, orderBy(){ return q; }, limit(){ return q; }};
+    return q;
+  }
+  const DB = {doc: docRef, collection: colRef};
+
+  /* ---- Fotos ---- */
+  const urls = new Map();
+  const EMPTY = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+  window.__blobURL = id => urls.get(id) || EMPTY;
+  window.__hasBlob = id => urls.has(id);
+  const ASSETS = {
+    async upload(blob){ const id = rid(32); await idbPut("blobs", id, blob); urls.set(id, URL.createObjectURL(blob)); return {id, url: urls.get(id), sizeBytes: blob.size, contentType: blob.type}; },
+    async putWithId(id, blob){ if (urls.has(id)) return; await idbPut("blobs", id, blob); urls.set(id, URL.createObjectURL(blob)); },
+    async delete(id){ await idbDel("blobs", id); const u = urls.get(id); if (u) URL.revokeObjectURL(u); urls.delete(id); return {deleted: true}; },
+    async list(){ return {assets: [...urls.keys()].map(id => ({id, url: urls.get(id)})), usage: {}}; }
+  };
+  window.__assets = ASSETS;
+
+  /* ---- Quién usa el móvil ---- */
+  const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : v; } catch(e){ return d; } };
+  const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch(e){} };
+  window.__nombre = () => lsGet("recetario-nombre", "").trim() || null;
+  window.__setNombre = n => lsSet("recetario-nombre", String(n || "").trim());
+  const USER = {
+    isOwner: async () => true, canEdit: async () => true, can: async () => true,
+    id: async () => window.__nombre(),
+    me: async () => ({id: window.__nombre(), name: window.__nombre() || "", avatarUrl: "", color: "", email: null, isOwner: true, canEdit: true}),
+    profiles: async ids => Object.fromEntries((Array.isArray(ids) ? ids : [ids]).map(id => [id, {id, name: id, avatarUrl: "", color: "", email: null, isMe: id === window.__nombre(), guest: false}])),
+    search: async () => []
+  };
+
+  /* ---- IA con clave propia ---- */
+  window.__aiCfg = () => { try { return JSON.parse(lsGet("recetario-ia", "{}")) || {}; } catch(e){ return {}; } };
+  window.__setAiCfg = c => lsSet("recetario-ia", JSON.stringify(c || {}));
+  window.__aiOn = () => { const c = window.__aiCfg(); return !!(c.prov && c.key); };
+  const DEF_MODEL = {gemini: "gemini-flash-latest", openai: "gpt-5-mini", anthropic: "claude-sonnet-5-5"};
+  window.__defModel = DEF_MODEL;
+  function toJPEG(b){
+    return new Promise(async res => {
+      try {
+        const bmp = await createImageBitmap(b); const s = Math.min(1, 1568 / Math.max(bmp.width, bmp.height));
+        const c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+        c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+        c.toBlob(x => { const fr = new FileReader(); fr.onload = () => res(fr.result.split(",")[1]); fr.readAsDataURL(x); }, "image/jpeg", .85);
+      } catch(e){ const fr = new FileReader(); fr.onload = () => res(String(fr.result).split(",")[1]); fr.readAsDataURL(b); }
+    });
+  }
+  function httpErr(status, msg){
+    if (status === 401 || status === 403) return {code: "bad_key", message: msg};
+    if (status === 404) return {code: "bad_model", message: msg};
+    if (status === 429) return {code: "rate_limited", message: msg};
+    if (status === 400 && /api key|api_key|credential/i.test(msg || "")) return {code: "bad_key", message: msg};
+    return {code: "upstream_error", message: msg || ("HTTP " + status)};
+  }
+  async function ask(prompt, images, signal){
+    const c = window.__aiCfg();
+    if (!c.prov || !c.key) throw {code: "not_granted"};
+    const model = (c.model || "").trim() || DEF_MODEL[c.prov];
+    const imgs = [];
+    for (const b of (images ? Array.from(images) : [])) imgs.push(await toJPEG(b));
+    let r, j;
+    try {
+      if (c.prov === "gemini"){
+        r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {method: "POST", signal,
+          headers: {"Content-Type": "application/json", "x-goog-api-key": c.key},
+          body: JSON.stringify({contents: [{role: "user", parts: [...imgs.map(d => ({inline_data: {mime_type: "image/jpeg", data: d}})), {text: prompt}]}], generationConfig: {responseMimeType: "application/json"}})});
+        j = await r.json().catch(() => ({}));
+        if (!r.ok) throw httpErr(r.status, j.error && j.error.message);
+        return ((j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || []).map(p => p.text || "").join("");
+      }
+      if (c.prov === "openai"){
+        r = await fetch("https://api.openai.com/v1/chat/completions", {method: "POST", signal,
+          headers: {"Content-Type": "application/json", "Authorization": "Bearer " + c.key},
+          body: JSON.stringify({model, response_format: {type: "json_object"}, messages: [{role: "user", content: [...imgs.map(d => ({type: "image_url", image_url: {url: "data:image/jpeg;base64," + d}})), {type: "text", text: prompt}]}]})});
+        j = await r.json().catch(() => ({}));
+        if (!r.ok) throw httpErr(r.status, j.error && j.error.message);
+        return (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || "";
+      }
+      if (c.prov === "anthropic"){
+        r = await fetch("https://api.anthropic.com/v1/messages", {method: "POST", signal,
+          headers: {"Content-Type": "application/json", "x-api-key": c.key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true"},
+          body: JSON.stringify({model, max_tokens: 12000, messages: [{role: "user", content: [...imgs.map(d => ({type: "image", source: {type: "base64", media_type: "image/jpeg", data: d}})), {type: "text", text: prompt}]}]})});
+        j = await r.json().catch(() => ({}));
+        if (!r.ok) throw httpErr(r.status, j.error && j.error.message);
+        return (j.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+      }
+      throw {code: "not_granted"};
+    } catch(e){
+      if (e && e.name === "AbortError") throw {code: "cancelled"};
+      if (e && e.code) throw e;
+      throw {code: "network", message: String(e && e.message || e)};
+    }
+  }
+  function parseJSON(t){
+    t = String(t || "").trim();
+    try { return JSON.parse(t); } catch(e){}
+    const f = t.match(/```(?:json)?\s*([\s\S]*?)```/); if (f){ try { return JSON.parse(f[1]); } catch(e){} }
+    for (const [a, b] of [["{", "}"], ["[", "]"]]){ const i = t.indexOf(a), k = t.lastIndexOf(b); if (i >= 0 && k > i){ try { return JSON.parse(t.slice(i, k + 1)); } catch(e){} } }
+    throw {code: "invalid_json", text: t};
+  }
+  const SAMPLE = async (input, opts) => ({text: await ask(typeof input === "string" ? input : input.map(m => m.content).join("\n\n"), opts && opts.images, opts && opts.signal), truncated: false});
+  SAMPLE.json = async (input, opts) => parseJSON((await SAMPLE(input, opts)).text);
+  SAMPLE.limits = async () => ({maxPromptBytes: 262144, images: {maxCount: 5, maxInputBytes: 20e6, mediaTypes: ["image/jpeg","image/png","image/webp"]}});
+  window.__sample = SAMPLE;
+
+  /* ---- Guardar y compartir archivos ---- */
+  const DOWNLOADS = {
+    async save({filename, data}){
+      const type = filename.endsWith(".json") ? "application/json" : filename.endsWith(".html") ? "text/html" : "text/plain";
+      const blob = data instanceof Blob ? data : new Blob([data], {type});
+      try {
+        const file = new File([blob], filename, {type});
+        if (navigator.canShare && navigator.canShare({files: [file]})){
+          try { await navigator.share({files: [file], title: filename}); return {status: "saved"}; }
+          catch(e){ if (e && e.name === "AbortError") throw {code: "declined"}; }
+        }
+      } catch(e){ if (e && e.code) throw e; }
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename;
+      document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+      return {status: "saved"};
+    }
+  };
+
+  /* ---- Sincronización con Dropbox ---- */
+  const SKEY = "recetario-sync" + (window.__dbName ? "-" + window.__dbName : "");
+  const sget = () => { try { return JSON.parse(lsGet(SKEY, "{}")) || {}; } catch(e){ return {}; } };
+  const sset = o => lsSet(SKEY, JSON.stringify(o));
+  const redirectURI = () => location.origin + location.pathname;
+  const hdrArg = o => JSON.stringify(o).replace(/[\u007f-￿]/g, c => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"));
+  function normPath(p){ p = String(p || "").trim().replace(/\\/g, "/").replace(/\/+$/, ""); if (!p) p = "/Recetario"; if (!p.startsWith("/")) p = "/" + p; return p; }
+  function b64url(buf){ let s = ""; new Uint8Array(buf).forEach(b => s += String.fromCharCode(b)); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+  const DBX = {
+    async connect(appKey, path){
+      const v = b64url(crypto.getRandomValues(new Uint8Array(48)));
+      const c = b64url(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(v)));
+      const state = rid(16);
+      sset({prov: "dropbox", appKey, path: normPath(path), verifier: v, state});
+      location.href = "https://www.dropbox.com/oauth2/authorize?" + new URLSearchParams({client_id: appKey, response_type: "code", code_challenge: c, code_challenge_method: "S256", redirect_uri: redirectURI(), token_access_type: "offline", state}).toString();
+    },
+    async finish(){
+      const qp = new URLSearchParams(location.search);
+      const code = qp.get("code"), state = qp.get("state"), err = qp.get("error");
+      if (!code && !err) return false;
+      const s = sget();
+      history.replaceState(null, "", location.pathname);
+      if (err || !s.verifier || state !== s.state){ SYNC.setStatus({state: "error", msg: err ? "Has cancelado la conexión con Dropbox." : "No se pudo completar la conexión con Dropbox. Vuelve a intentarlo."}); return true; }
+      try {
+        const r = await fetch("https://api.dropboxapi.com/oauth2/token", {method: "POST", body: new URLSearchParams({code, grant_type: "authorization_code", code_verifier: s.verifier, client_id: s.appKey, redirect_uri: redirectURI()})});
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok || !j.refresh_token) throw new Error(j.error_description || j.error || ("HTTP " + r.status));
+        sset({prov: "dropbox", appKey: s.appKey, path: s.path, refresh: j.refresh_token, access: j.access_token, exp: Date.now() + ((j.expires_in || 14400) - 120) * 1000, subidas: []});
+        SYNC.justConnected = true;
+      } catch(e){ sset({}); SYNC.setStatus({state: "error", msg: "Dropbox no aceptó la conexión: " + e.message}); }
+      return true;
+    },
+    async token(force){
+      const s = sget(); if (!s.refresh) throw {code: "auth"};
+      if (!force && s.access && s.exp > Date.now()) return s.access;
+      const r = await fetch("https://api.dropboxapi.com/oauth2/token", {method: "POST", body: new URLSearchParams({grant_type: "refresh_token", refresh_token: s.refresh, client_id: s.appKey})});
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok){ if (r.status === 400 || r.status === 401) throw {code: "auth", message: j.error_description}; throw {code: "network"}; }
+      sset({...sget(), access: j.access_token, exp: Date.now() + ((j.expires_in || 14400) - 120) * 1000});
+      return j.access_token;
+    },
+    async call(url, arg, body, retry){
+      const headers = {"Authorization": "Bearer " + await this.token(), "Dropbox-API-Arg": hdrArg(arg)};
+      if (body !== undefined) headers["Content-Type"] = "application/octet-stream";
+      const r = await fetch(url, {method: "POST", headers, body});
+      if (r.status === 401 && retry !== false){ await this.token(true); return this.call(url, arg, body, false); }
+      return r;
+    },
+    async download(path){
+      const r = await this.call("https://content.dropboxapi.com/2/files/download", {path});
+      if (r.status === 409){ const t = await r.text(); if (/not_found/.test(t)) return null; throw {code: "dropbox", message: t}; }
+      if (!r.ok) throw {code: r.status === 429 ? "rate_limited" : "dropbox", message: (await r.text()).slice(0, 200)};
+      let rev = null; try { rev = JSON.parse(r.headers.get("Dropbox-API-Result")).rev; } catch(e){}
+      return {blob: await r.blob(), rev};
+    },
+    async upload(path, blob, rev){
+      const mode = rev ? {".tag": "update", "update": rev} : {".tag": "add"};
+      const r = await this.call("https://content.dropboxapi.com/2/files/upload", {path, mode, autorename: false, mute: true}, blob);
+      if (r.status === 409){ const t = await r.text(); if (/conflict/.test(t)) throw {code: "conflict"}; throw {code: "dropbox", message: t.slice(0, 200)}; }
+      if (!r.ok) throw {code: r.status === 429 ? "rate_limited" : "dropbox", message: (await r.text()).slice(0, 200)};
+      return (await r.json()).rev;
+    }
+  };
+  /* ---- Carpeta del móvil (Chrome en Android y ordenadores) ---- */
+  const DIRKEY = "__meta/dir";
+  let dirHandle = null;
+  async function fsPerm(ask){
+    if (!dirHandle) return false;
+    const o = {mode: "readwrite"};
+    try { if ((await dirHandle.queryPermission(o)) === "granted") return true; if (ask) return (await dirHandle.requestPermission(o)) === "granted"; } catch(e){}
+    return false;
+  }
+  async function walk(path, create){
+    const parts = path.replace(/^\/+/, "").split("/").filter(Boolean);
+    let d = dirHandle;
+    for (const p of parts.slice(0, -1)) d = await d.getDirectoryHandle(p, {create});
+    return {d, name: parts[parts.length - 1]};
+  }
+  const stamp = f => f.lastModified + ":" + f.size;
+  const FOLDER = {
+    async download(path){
+      if (!(await fsPerm(false))) throw {code: "perm"};
+      try {
+        const {d, name} = await walk(path, false);
+        const f = await (await d.getFileHandle(name)).getFile();
+        return {blob: new Blob([await f.arrayBuffer()], {type: f.type || "application/octet-stream"}), rev: stamp(f)};
+      } catch(e){ if (e && (e.name === "NotFoundError" || e.name === "TypeMismatchError")) return null; throw e; }
+    },
+    async upload(path, blob, rev){
+      if (!(await fsPerm(false))) throw {code: "perm"};
+      const {d, name} = await walk(path, true);
+      let fh = null; try { fh = await d.getFileHandle(name); } catch(e){}
+      if (fh){ if (!rev || stamp(await fh.getFile()) !== rev) throw {code: "conflict"}; }
+      else fh = await d.getFileHandle(name, {create: true});
+      const w = await fh.createWritable(); await w.write(blob); await w.close();
+      return stamp(await fh.getFile());
+    }
+  };
+  async function useHandle(h){
+    dirHandle = h; await idbPut("docs", DIRKEY, h);
+    sset({prov: "carpeta", name: h.name, subidas: []});
+    SYNC.setStatus({state: "busy"}); await SYNC.run();
+  }
+
+  async function mergeAll(R){
+    const now = Date.now(), cutoff = now - 90 * 864e5;
+    const RD = R.docs || {}, RT = R.tomb || {};
+    const out = {formato: "recetario-sync-v1", actualizado: new Date().toISOString(), docs: {}, tomb: {}};
+    const paths = new Set([...docs.keys(), ...Object.keys(RD), ...Object.keys(tomb), ...Object.keys(RT)]);
+    let changedRemote = false, tombDirty = false, changedLocal = false;
+    for (const p of paths){
+      if (p.startsWith("__meta/") || !/^[A-Za-z0-9_\-.~:@+]+(\/[A-Za-z0-9_\-.~:@+]+)+$/.test(p)) continue;
+      const l = docs.get(p), r = RD[p] && typeof RD[p] === "object" ? RD[p] : null;
+      const t = Math.max(tomb[p] || 0, RT[p] || 0);
+      const lm = l ? (l._mod || 1) : 0, rm = r ? (r._mod || 1) : 0;
+      let win = lm >= rm ? l : r;
+      const wm = Math.max(lm, rm);
+      if (win && l && r && p.startsWith("recetas/")){
+        const lose = win === l ? r : l;
+        const v = {...(lose.valoraciones || {}), ...(win.valoraciones || {})};
+        if (JSON.stringify(v) !== JSON.stringify(win.valoraciones || {})) win = {...win, valoraciones: v};
+      }
+      if (t && t >= wm){
+        if (t > cutoff) out.tomb[p] = t;
+        if (l){ docs.delete(p); await idbDel("docs", p); changedLocal = true; }
+        if (tomb[p] !== t){ tomb[p] = t; tombDirty = true; }
+      } else if (win){
+        out.docs[p] = win;
+        if (!l || JSON.stringify(l) !== JSON.stringify(win)){ docs.set(p, win); await idbPut("docs", p, win); changedLocal = true; }
+      }
+      if (JSON.stringify(out.docs[p] || null) !== JSON.stringify(r) || (out.tomb[p] || 0) !== (RT[p] || 0)) changedRemote = true;
+    }
+    for (const p of Object.keys(tomb)) if (tomb[p] < cutoff){ delete tomb[p]; tombDirty = true; }
+    if (tombDirty) await idbPut("docs", TOMB, tomb);
+    if (changedLocal) notifyAll();
+    return {out, changedRemote};
+  }
+  async function syncBlobs(P, base){
+    const up = new Set(sget().subidas || []);
+    const refs = new Set();
+    for (const [p, d] of docs) if (p.startsWith("recetas/") && d){ (d.fotos || []).forEach(id => refs.add(id)); (d.pasos || []).forEach(x => x && x.foto && refs.add(x.foto)); }
+    let got = false;
+    for (const id of refs){
+      if (urls.has(id) || !/^[a-z0-9]{8,64}$/i.test(id)) continue;
+      try { const r = await P.download(`${base}/fotos/${id}.jpg`); if (r){ await idbPut("blobs", id, r.blob); urls.set(id, URL.createObjectURL(r.blob)); up.add(id); got = true; } } catch(e){ if (e && e.code === "auth") throw e; }
+    }
+    for (const id of refs){
+      if (!urls.has(id) || up.has(id)) continue;
+      const b = await (await fetch(urls.get(id))).blob();
+      try { await P.upload(`${base}/fotos/${id}.jpg`, b, null); } catch(e){ if (!(e && e.code === "conflict")) throw e; }
+      up.add(id);
+    }
+    sset({...sget(), subidas: [...up]});
+    if (got) notifyAll();
+  }
+  const SYNC = {
+    status: {state: "off"}, timer: null, busy: false, again: false, justConnected: false,
+    provider(){ const s = sget(); return window.__syncProvider || (s.prov === "dropbox" && s.refresh ? DBX : s.prov === "carpeta" && dirHandle ? FOLDER : null); },
+    base(){ return window.__syncProvider ? (window.__syncBase || "/Recetario") : sget().prov === "carpeta" ? "" : sget().path; },
+    later(){ if (!this.provider()) return; clearTimeout(this.timer); this.timer = setTimeout(() => this.run(), 2500); },
+    setStatus(st){ this.status = st; try { window.dispatchEvent(new Event("recetario-sync")); } catch(e){} },
+    async run(){
+      const P = this.provider(); if (!P) return;
+      if (this.busy){ this.again = true; return; }
+      this.busy = true; this.setStatus({...this.status, state: "busy"});
+      const base = this.base();
+      try {
+        await ready;
+        for (let k = 0; k < 4; k++){
+          const rem = await P.download(base + "/recetario.json");
+          let R = {docs: {}, tomb: {}};
+          if (rem){
+            let j = null; try { j = JSON.parse(await rem.blob.text()); } catch(e){}
+            if (!j || typeof j !== "object" || (j.formato !== "recetario-sync-v1")) throw {code: "bad_file"};
+            R = j;
+          }
+          const {out, changedRemote} = await mergeAll(R);
+          await syncBlobs(P, base);
+          if (rem && !changedRemote) break;
+          try { await P.upload(base + "/recetario.json", new Blob([JSON.stringify(out)], {type: "application/json"}), rem ? rem.rev : null); break; }
+          catch(e){ if (e && e.code === "conflict" && k < 3) continue; throw e; }
+        }
+        sset({...sget(), lastSync: Date.now()});
+        this.setStatus({state: "ok", at: Date.now()});
+      } catch(e){
+        console.error("sync", e);
+        const c = e && e.code;
+        this.setStatus({state: "error", msg:
+          c === "perm" ? "La app necesita permiso para volver a usar la carpeta. Pulsa «Dar acceso a la carpeta» en Ajustes."
+          : c === "auth" ? "La conexión con Dropbox ha caducado. Vuelve a conectar en Ajustes."
+          : c === "bad_file" ? "En la carpeta hay un recetario.json que no es de esta app. Elige otra carpeta."
+          : c === "rate_limited" ? "Dropbox pide esperar un poco. Se reintentará."
+          : (e instanceof TypeError || c === "network") ? "Sin conexión. Los cambios quedan en el móvil y se subirán después."
+          : (sget().prov === "carpeta" ? "No se pudo guardar en la carpeta." : "No se pudo sincronizar con Dropbox.") + (e && e.message ? " " + String(e.message).slice(0, 160) : "")});
+      } finally { this.busy = false; if (this.again){ this.again = false; this.later(); } }
+    }
+  };
+  window.__sync = {
+    connected: () => !!SYNC.provider(),
+    status: () => SYNC.status,
+    info: () => { const s = sget(); return {path: s.path || "/Recetario", appKey: s.appKey || "", lastSync: s.lastSync || null, prov: s.prov || null, name: s.name || ""}; },
+    folderSupported: () => typeof window.showDirectoryPicker === "function",
+    async pickFolder(){
+      let h;
+      try { h = await window.showDirectoryPicker({id: "recetario", mode: "readwrite"}); }
+      catch(e){ if (e && e.name === "AbortError") return false; throw e; }
+      await useHandle(h); return true;
+    },
+    useHandle,
+    async grant(){ const ok = await fsPerm(true); if (ok) SYNC.run(); return ok; },
+    fixedKey: () => (window.RECETARIO_DROPBOX_KEY || "").trim(),
+    connect: (appKey, path) => DBX.connect(String(appKey || "").trim(), path),
+    disconnect: async () => { sset({}); if (dirHandle){ dirHandle = null; try { await idbDel("docs", DIRKEY); } catch(e){} } SYNC.setStatus({state: "off"}); },
+    runNow: () => SYNC.run(),
+    redirectURI
+  };
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") SYNC.later(); });
+  window.addEventListener("online", () => SYNC.later());
+  setInterval(() => { if (document.visibilityState === "visible") SYNC.run(); }, 5 * 60 * 1000);
+
+  ready = (async () => {
+    try {
+      const [all, blobs] = await Promise.all([idbAll("docs"), idbAll("blobs")]);
+      for (const k in all){ if (k === TOMB) tomb = all[k] || {}; else if (k === DIRKEY) dirHandle = all[k]; else docs.set(k, all[k]); }
+      for (const k in blobs) urls.set(k, URL.createObjectURL(blobs[k]));
+    } catch(e){ console.error("No se pudo abrir el almacenamiento", e); }
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
+  })();
+  ready.then(async () => { try { await DBX.finish(); } catch(e){} if (SYNC.provider()) SYNC.run(); });
+
+  window.claude = {use: async name => {
+    await ready;
+    if (name === "db") return DB;
+    if (name === "user") return USER;
+    if (name === "assets") return ASSETS;
+    if (name === "downloads") return DOWNLOADS;
+    if (name === "sample") return window.__aiOn() ? SAMPLE : null;
+    return null;
+  }};
+})();
+
+</script>
+<script>
+"use strict";
+try { if (window.self !== window.top) document.documentElement.classList.add("embedded"); } catch(e){ document.documentElement.classList.add("embedded"); }
+/* ---------- Constantes ---------- */
+const CATS = {"principal":"Principales","entrante":"Entrantes","postre":"Postres","guarnición":"Guarniciones","salsa":"Salsas","bebida":"Bebidas","otro":"Otros"};
+const CAT_KEYS = Object.keys(CATS);
+const COCINAS = ["Española","Gallega","Mediterránea","Italiana","Francesa","Portuguesa","Griega","Árabe y marroquí","Mexicana","Latinoamericana","Estadounidense","Japonesa","China","Tailandesa","India","Coreana","Otra"];
+const UTENSILIOS = ["Thermomix","Olla lenta","Olla exprés","Barbacoa","Paellera","Horno","Freidora de aire","Microondas","Wok","Plancha"];
+const UT_RE = [
+  ["Thermomix", /thermomix|varoma|\bvel(ocidad)?\.?\s*\d|giro a la izquierda|cuchara inversa|\btm[5-7]\b/],
+  ["Olla lenta", /olla lenta|slow ?cooker|crock-?pot/],
+  ["Olla exprés", /olla (expres|rapida|a presion)|olla gm\b|pressure cooker/],
+  ["Barbacoa", /barbacoa|a la brasa|parrilla|\bbbq\b|kamado/],
+  ["Paellera", /paellera|\bpaella\b/],
+  ["Freidora de aire", /freidora de aire|air ?fryer/],
+  ["Horno", /\bhorno\b|hornea|gratina/],
+  ["Microondas", /microondas/],
+  ["Wok", /\bwok\b/],
+  ["Plancha", /a la plancha|\bplancha\b/]
+];
+function detectUtens(text){ const t = deacc(String(text||"").toLowerCase()); return UT_RE.filter(([, re]) => re.test(t)).map(([u]) => u); }
+function normList(v, list){ const k = deacc(String(v||"").toLowerCase().trim()); if (!k || k === "null") return null; const hit = list.find(x => deacc(x.toLowerCase()) === k || deacc(x.toLowerCase()).startsWith(k)); return hit || (String(v).trim().charAt(0).toUpperCase() + String(v).trim().slice(1)); }
+const SCHEMA = `{
+  "formato": "recetario-v1",
+  "recetas": [{
+    "titulo": "",
+    "descripcion": "",
+    "raciones": 4,
+    "tiempos": {"preparacion_min": null, "coccion_min": null, "reposo_min": null},
+    "dificultad": "fácil | media | difícil",
+    "categoria": "entrante | principal | postre | guarnición | salsa | bebida | otro",
+    "etiquetas": [],
+    "cocina": "española | gallega | mediterránea | italiana | francesa | portuguesa | griega | árabe y marroquí | mexicana | latinoamericana | estadounidense | japonesa | china | tailandesa | india | coreana | otra | null",
+    "utensilios": ["thermomix | olla lenta | olla exprés | barbacoa | paellera | horno | freidora de aire | microondas | wok | plancha"],
+    "ingredientes": [
+      {"grupo": null, "cantidad": 200, "unidad": "g", "nombre": "harina", "nota": "tamizada"}
+    ],
+    "pasos": [
+      {"texto": "", "temporizador_min": null}
+    ],
+    "fuente": {"tipo": "propia | web | instagram | tiktok | youtube | libro | otro", "url": null, "autor": null},
+    "notas": ""
+  }]
+}`;
+const RULES = `- Cantidades en número (½ → 0.5). Si es "al gusto", cantidad null y unidad "al gusto".
+- Unidades: g, kg, ml, l, cdta, cda, taza, ud, pizca, al gusto.
+- Usa "grupo" si hay partes (Masa, Relleno, Salsa…).
+- Un paso por acción. Si un paso tiene un tiempo, ponlo también en temporizador_min.
+- Si un dato no aparece, pon null. No inventes nada.
+- "cocina": el origen del plato solo si es claro; si no, null. "utensilios": solo los aparatos que la receta necesita de verdad (lista vacía si basta con fuego y sartén u olla normal).
+- Todo en español.`;
+const PROMPT_IA = `Convierte la receta que te voy a dar (dictada, escrita, foto o captura) al formato de mi app de recetas, Recetario da Casa.
+
+Devuelve SOLO un bloque de código JSON válido, sin texto antes ni después, con esta estructura:
+
+${SCHEMA}
+
+Reglas:
+${RULES}
+- Si falta algo importante (raciones, cantidades), pregúntame antes de generar el JSON.`;
+
+const ICON = {
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  dots:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-9-9a4.8 4.8 0 0 1 9-3 4.8 4.8 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg>',
+  heartOn:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.4-9-9a4.8 4.8 0 0 1 9-3 4.8 4.8 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg>',
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+  gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  filter:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-right:4px;vertical-align:-3px"><path d="M4 6h16M7 12h10M10 18h4"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>'
+};
+
+/* ---------- Estado ---------- */
+const S = {
+  recetas: [], loaded: false, noDb: false,
+  view: "list", currentId: null,
+  tab: "todas", q: "", cat: null, sort: "recientes",
+  servings: {}, checked: {}, cookStep: 0, cookOpen: false,
+  db: null, user: null, assets: null, sample: null, downloads: null,
+  uid: null, canWrite: true, canImages: false, maxImages: 5,
+  draft: null, timers: [], audio: null, wakeLock: null,
+  fCocina: null, fUtens: null,
+  menu: null, menuLoaded: false, mcfg: null, mEdit: null, backTo: "list"
+};
+try { const saved = JSON.parse(localStorage.getItem("recetario-prefs") || "{}"); if (saved.tab) S.tab = saved.tab; if (saved.sort) S.sort = saved.sort; } catch (e) {}
+function savePrefs(){ try { localStorage.setItem("recetario-prefs", JSON.stringify({tab:S.tab, sort:S.sort})); } catch (e) {} }
+
+/* ---------- Utilidades ---------- */
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
+function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function deacc(s){ return String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,""); }
+function str(v){ return v == null ? "" : String(v).trim(); }
+function num(v){
+  if (v == null || v === "") return null;
+  if (typeof v === "number") return isFinite(v) ? v : null;
+  const s = String(v).trim().replace(",", ".");
+  const frac = {"½":.5,"¼":.25,"¾":.75,"⅓":1/3,"⅔":2/3};
+  if (frac[s] != null) return frac[s];
+  let m = s.match(/^(\d+)\s+(\d+)\/(\d+)$/); if (m) return +m[1] + m[2]/m[3];
+  m = s.match(/^(\d+)\/(\d+)$/); if (m) return m[1]/m[2];
+  const n = parseFloat(s); return isFinite(n) ? n : null;
+}
+function today(){ return isoLocal(new Date()); }
+function fmtDate(d){ try { return new Date(d+"T12:00:00").toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"}); } catch(e){ return d; } }
+function fmtMin(m){ if (!m) return "–"; if (m < 60) return Math.round(m)+" min"; const h = Math.floor(m/60), r = Math.round(m%60); return h+" h"+(r? " "+r : ""); }
+function totalMin(r){ const t = r.tiempos||{}; return (t.preparacion_min||0)+(t.coccion_min||0)+(t.reposo_min||0); }
+function avgRating(r){ const v = Object.values(r.valoraciones||{}).filter(x=>typeof x==="number"); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null; }
+function starsText(n){ const full = Math.round(n); return "★".repeat(full)+"☆".repeat(5-full); }
+function slug(s){ return deacc(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60) || "receta"; }
+function fmtQty(q, unit){
+  if (q == null) return "";
+  const u = (unit||"").toLowerCase();
+  const metric = ["g","kg","ml","l"].includes(u);
+  if (metric){
+    if ((u === "g" || u === "ml") && q >= 10) return String(Math.round(q));
+    return String(q >= 10 ? Math.round(q*10)/10 : Math.round(q*100)/100).replace(".", ",");
+  }
+  const whole = Math.floor(q), dec = q - whole;
+  if (dec < .06) return String(whole || Math.round(q*100)/100).replace(".", ",");
+  for (const [v,ch] of [[.25,"¼"],[1/3,"⅓"],[.5,"½"],[2/3,"⅔"],[.75,"¾"]]) if (Math.abs(dec - v) < .06) return (whole ? whole+" " : "")+ch;
+  return String(q >= 10 ? Math.round(q*10)/10 : Math.round(q*100)/100).replace(".", ",");
+}
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(()=>{ t.hidden = true; }, 2600); }
+async function copyText(text, el){
+  try { await navigator.clipboard.writeText(text); toast("Copiado"); return true; }
+  catch(e){ if (el){ el.focus(); el.select?.(); } toast("Selecciona el texto y cópialo a mano"); return false; }
+}
+function getR(id){ return S.recetas.find(r => r.id === id); }
+function blobUrl(id){ return window.__blobURL(id); }
+
+/* ---------- Normalizar recetas (formato recetario-v1) ---------- */
+function normReceta(r){
+  r = r && typeof r === "object" ? r : {};
+  const t = r.tiempos || {};
+  const ings = Array.isArray(r.ingredientes) ? r.ingredientes.map(i => typeof i === "string"
+      ? {grupo:null, cantidad:null, unidad:"", nombre:i.trim(), nota:""}
+      : {grupo: str(i.grupo)||null, cantidad: num(i.cantidad), unidad: str(i.unidad), nombre: str(i.nombre), nota: str(i.nota)}).filter(i => i.nombre) : [];
+  const okImg = d => typeof d === "string" && d.startsWith("data:image/") && d.length < 1500000 ? d : null;
+  const pasos = Array.isArray(r.pasos) ? r.pasos.map(p => typeof p === "string"
+      ? {texto:p.trim(), temporizador_min:null}
+      : {texto: str(p.texto), temporizador_min: num(p.temporizador_min), foto_data: okImg(p.foto_data)}).filter(p => p.texto) : [];
+  const f = r.fuente || {};
+  let cat = deacc(str(r.categoria).toLowerCase());
+  cat = CAT_KEYS.find(k => deacc(k) === cat) || (cat ? "otro" : null);
+  let dif = deacc(str(r.dificultad).toLowerCase());
+  dif = {facil:"fácil", media:"media", dificil:"difícil"}[dif] || null;
+  const foto = typeof r.foto_data === "string" && r.foto_data.startsWith("data:image/") && r.foto_data.length < 1500000 ? r.foto_data : null;
+  return {
+    titulo: str(r.titulo) || "Receta sin título",
+    descripcion: str(r.descripcion),
+    raciones: num(r.raciones),
+    tiempos: {preparacion_min: num(t.preparacion_min), coccion_min: num(t.coccion_min), reposo_min: num(t.reposo_min)},
+    dificultad: dif, categoria: cat,
+    etiquetas: Array.isArray(r.etiquetas) ? r.etiquetas.map(str).filter(Boolean).slice(0,12) : [],
+    cocina: normList(r.cocina, COCINAS),
+    utensilios: (() => { const u = Array.isArray(r.utensilios) ? [...new Set(r.utensilios.map(x => detectUtens(x)[0] || normList(x, UTENSILIOS)).filter(Boolean))] : [];
+      return u.length ? u : detectUtens([r.titulo, ...pasos.map(x => x.texto)].join(" ")); })(),
+    ingredientes: ings, pasos,
+    fuente: {tipo: str(f.tipo) || "propia", url: str(f.url) || null, autor: str(f.autor) || null},
+    notas: str(r.notas),
+    nuestraVersion: str(r.nuestraVersion || r.nuestra_version),
+    estado: r.estado === "probada" ? "probada" : "por_probar",
+    foto_data: foto
+  };
+}
+function exportable(r){
+  return {
+    titulo:r.titulo, descripcion:r.descripcion||"", raciones:r.raciones??null, tiempos:r.tiempos||{},
+    dificultad:r.dificultad||null, categoria:r.categoria||null, etiquetas:r.etiquetas||[], cocina:r.cocina||null, utensilios:r.utensilios||[],
+    ingredientes:r.ingredientes||[], pasos:(r.pasos||[]).map(p => ({texto:p.texto, temporizador_min:p.temporizador_min ?? null})), fuente:r.fuente||{tipo:"propia",url:null,autor:null},
+    notas:r.notas||"", nuestraVersion:r.nuestraVersion||"",
+    estado:r.estado||"por_probar", valoracion_media: avgRating(r)
+  };
+}
+function extractJSON(text){
+  text = String(text||"").trim();
+  let fotosHTML = null;
+  if (text.startsWith("<")){
+    const doc = new DOMParser().parseFromString(text, "text/html");
+    const s = doc.getElementById("recetario-datos");
+    if (!s) throw new Error("Ese archivo HTML no lleva recetas dentro.");
+    fotosHTML = {};
+    doc.querySelectorAll("img[data-foto]").forEach(img => { fotosHTML[img.dataset.foto] = img.getAttribute("src"); });
+    doc.querySelectorAll("img[data-paso-foto]").forEach(img => { fotosHTML["p" + img.dataset.pasoFoto] = img.getAttribute("src"); });
+    text = s.textContent;
+  }
+  const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fence) text = fence[1];
+  let obj = null;
+  try { obj = JSON.parse(text); } catch(e){
+    const a = text.indexOf("{"), b = text.lastIndexOf("}");
+    if (a >= 0 && b > a) { try { obj = JSON.parse(text.slice(a, b+1)); } catch(e2){} }
+    if (!obj){ const a2 = text.indexOf("["), b2 = text.lastIndexOf("]"); if (a2 >= 0 && b2 > a2) { try { obj = JSON.parse(text.slice(a2, b2+1)); } catch(e3){} } }
+  }
+  if (!obj) throw new Error("No encuentro un JSON válido. Copia la respuesta completa de la IA, incluidas las llaves { }.");
+  let list;
+  if (Array.isArray(obj)) list = obj;
+  else if (obj && Array.isArray(obj.recetas)) list = obj.recetas;
+  else if (obj && obj.titulo) list = [obj];
+  else throw new Error("El JSON no tiene recetas en el formato recetario-v1.");
+  if (fotosHTML) list = list.map((r,i) => ({...r, foto_data: fotosHTML[i] || r.foto_data,
+    pasos: Array.isArray(r.pasos) ? r.pasos.map((ps,j) => fotosHTML["p"+i+"-"+j] && ps && typeof ps === "object" ? {...ps, foto_data: fotosHTML["p"+i+"-"+j]} : ps) : r.pasos}));
+  return list.map(normReceta);
+}
+
+/* ---------- Imágenes ---------- */
+async function compressImage(file, max=1600, q=0.82){
+  try {
+    const bmp = await createImageBitmap(file);
+    const s = Math.min(1, max/Math.max(bmp.width, bmp.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(bmp.width*s); c.height = Math.round(bmp.height*s);
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+    return await new Promise(res => c.toBlob(b => res(b || file), "image/jpeg", q));
+  } catch(e){ return file; }
+}
+function blobToDataURL(b){ return new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(b); }); }
+async function assetToDataURL(id, max=900, q=0.72){
+  try { const r = await fetch(blobUrl(id)); if (!r.ok) return null; const b = await compressImage(await r.blob(), max, q); return await blobToDataURL(b); }
+  catch(e){ return null; }
+}
+async function dataURLToBlob(d){ const r = await fetch(d); return await r.blob(); }
+async function uploadImage(fileOrBlob){
+  if (!S.assets) throw new Error("Solo quien puede editar el recetario sube fotos.");
+  const b = await compressImage(fileOrBlob);
+  const res = await S.assets.upload(b, {type:"image/jpeg"});
+  return res.id;
+}
+
+/* ---------- Base de datos ---------- */
+async function createRecipe(r, fotos){
+  const now = new Date().toISOString();
+  const {foto_data, ...rest} = r;
+  rest.pasos = (rest.pasos || []).map(({foto_data: _f, ...ps}) => ps);
+  const body = {...rest, fotos: fotos || [], favorita: false, valoraciones: {},
+    probadaEn: r.estado === "probada" ? today() : null, creadaEn: now, actualizadaEn: now, creadaPor: S.uid || null};
+  const ref = S.db.collection("recetas").doc();
+  await ref.set(JSON.parse(JSON.stringify(body)));
+  return ref.id;
+}
+async function updateRecipe(id, patch){
+  await S.db.doc("recetas/"+id).update(JSON.parse(JSON.stringify({...patch, actualizadaEn: new Date().toISOString()})));
+}
+function dbErr(e){
+  const c = e && e.code;
+  if (c === "quota_exceeded") return "El recetario está lleno. Borra recetas que no uses para hacer sitio.";
+  if (c === "invalid_argument") return "No tienes permiso para cambiar el recetario.";
+  if (c === "resource_exhausted") return "Demasiados cambios seguidos. Espera unos segundos.";
+  return "No se pudo guardar. Comprueba la conexión e inténtalo otra vez.";
+}
+
+/* ---------- Render principal ---------- */
+function render(){
+  const v = $("#view");
+  if (S.view === "list"){
+    if (!$("#results", v)) v.innerHTML = listShell();
+    updateList();
+  } else if (S.view === "detail"){
+    const r = getR(S.currentId);
+    if (!r){ S.view = "list"; v.innerHTML = ""; return render(); }
+    const y = window.scrollY;
+    v.innerHTML = detailHTML(r);
+    window.scrollTo(0, y);
+    fillVoters(r);
+  } else if (S.view === "menu"){
+    const y = window.scrollY;
+    v.innerHTML = menuHTML();
+    window.scrollTo(0, y);
+  } else if (S.view === "edit"){
+    if (!$("#editform", v)) v.innerHTML = editHTML();
+  }
+  if (S.cookOpen) renderCook();
+}
+function go(view, id){
+  S.view = view; if (id !== undefined) S.currentId = id;
+  $("#view").innerHTML = ""; render(); window.scrollTo(0,0);
+}
+
+/* ---------- Lista ---------- */
+function listShell(){
+  const chips = [`<button class="chip" data-act="cat" data-cat="" aria-pressed="${!S.cat}">Todas</button>`]
+    .concat(CAT_KEYS.map(k => `<button class="chip" data-act="cat" data-cat="${k}" aria-pressed="${S.cat===k}">${CATS[k]}</button>`)).join("");
+  return `
+  <header class="top">
+    <div class="brand"><h1>Recetario da Casa</h1><span id="syncline">${syncLabel()}</span></div>
+    <button class="iconbtn wide" data-act="openMenu">${ICON.cal}Menú</button>
+    <button class="iconbtn" data-act="settings" aria-label="Ajustes">${ICON.gear}</button>
+    <button class="iconbtn" data-act="mainMenu" aria-label="Más opciones">${ICON.dots}</button>
+  </header>
+  <div class="cenefa" aria-hidden="true"></div>
+  <div class="search">${ICON.search}<input id="q" type="search" placeholder="Busca por nombre o ingredientes: pollo, limón" value="${esc(S.q)}" autocomplete="off" aria-label="Buscar recetas"></div>
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+  <div class="chips" id="chips">${chips}</div>
+  <div class="chips" id="fbar"></div>
+  <div class="sortrow"><span class="small muted" id="count"></span>
+    <label class="small"><span class="muted">Ordenar: </span><select id="sort" aria-label="Ordenar">
+      <option value="recientes"${S.sort==="recientes"?" selected":""}>Recientes</option>
+      <option value="valoradas"${S.sort==="valoradas"?" selected":""}>Mejor valoradas</option>
+      <option value="rapidas"${S.sort==="rapidas"?" selected":""}>Más rápidas</option>
+      <option value="alfabetico"${S.sort==="alfabetico"?" selected":""}>A–Z</option>
+    </select></label></div>
+  <div id="results"></div>
+  ${S.canWrite && S.db ? `<button class="fab" data-act="add">${ICON.plus}Añadir receta</button>` : ""}`;
+}
+function matches(r, q){
+  if (!q) return true;
+  const terms = deacc(q.toLowerCase()).split(/[,\s]+/).filter(t => t.length > 1);
+  if (!terms.length) return true;
+  const hay = deacc([r.titulo, r.descripcion, (r.etiquetas||[]).join(" "), (r.ingredientes||[]).map(i=>i.nombre).join(" "), CATS[r.categoria]||"", r.cocina||"", (r.utensilios||[]).join(" ")].join(" ").toLowerCase());
+  return terms.every(t => hay.includes(t));
+}
+function filtered(){
+  let list = S.recetas.filter(r => matches(r, S.q) && (!S.cat || r.categoria === S.cat) && (!S.fCocina || r.cocina === S.fCocina) && (!S.fUtens || (r.utensilios||[]).includes(S.fUtens)));
+  const counts = {todas:list.length, probadas:list.filter(r=>r.estado==="probada").length, por_probar:list.filter(r=>r.estado!=="probada").length, favoritas:list.filter(r=>r.favorita).length};
+  if (S.tab === "probadas") list = list.filter(r => r.estado === "probada");
+  else if (S.tab === "por_probar") list = list.filter(r => r.estado !== "probada");
+  else if (S.tab === "favoritas") list = list.filter(r => r.favorita);
+  const by = {
+    recientes: (a,b) => String(b.actualizadaEn||"").localeCompare(String(a.actualizadaEn||"")),
+    valoradas: (a,b) => (avgRating(b)??-1) - (avgRating(a)??-1),
+    rapidas: (a,b) => (totalMin(a)||9999) - (totalMin(b)||9999),
+    alfabetico: (a,b) => a.titulo.localeCompare(b.titulo, "es")
+  }[S.sort];
+  list.sort(by);
+  return {list, counts};
+}
+function cardHTML(r){
+  const foto = r.fotos && r.fotos[0];
+  const avg = avgRating(r);
+  const tm = totalMin(r);
+  const state = r.estado === "probada"
+    ? `<span class="pill ok">Probada${avg ? ` · <span class="starline" aria-label="${avg.toFixed(1)} de 5">★ ${avg.toFixed(1).replace(".",",")}</span>` : ""}</span>`
+    : `<span class="pill wait">Por probar</span>`;
+  return `<li><button class="card" data-act="open" data-id="${r.id}">
+    ${foto ? `<img class="thumb" src="${blobUrl(foto)}" alt="" loading="lazy">` : `<span class="thumb" aria-hidden="true">${esc(r.titulo.charAt(0).toUpperCase())}</span>`}
+    <span style="min-width:0">
+      <span class="t" style="display:block">${esc(r.titulo)}</span>
+      <span class="m">${state}${tm ? `<span>${fmtMin(tm)}</span>` : ""}${r.raciones ? `<span>${fmtQty(r.raciones)} rac.</span>` : ""}${r.categoria ? `<span>${esc(CATS[r.categoria]||"")}</span>` : ""}${r.cocina ? `<span>${esc(r.cocina)}</span>` : ""}${(r.utensilios||[]).length ? `<span>${esc(r.utensilios.slice(0,2).join(", "))}</span>` : ""}${r.favorita ? `<span class="fav" aria-label="Favorita">♥</span>` : ""}</span>
+    </span></button></li>`;
+}
+function updateList(){
+  const {list, counts} = filtered();
+  const tabs = [["todas","Todas"],["probadas","Probadas"],["por_probar","Por probar"],["favoritas","Favoritas"]];
+  $("#tabs").innerHTML = tabs.map(([k,l]) => `<button role="tab" data-act="tab" data-tab="${k}" aria-selected="${S.tab===k}"><b>${counts[k]}</b>${l}</button>`).join("");
+  $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String((c.dataset.cat||null) === S.cat)));
+  const nf = (S.fCocina ? 1 : 0) + (S.fUtens ? 1 : 0);
+  $("#fbar").innerHTML = `<button class="chip" data-act="filters" aria-pressed="${nf > 0}">${ICON.filter}Cocina y aparatos${nf ? ` · ${nf}` : ""}</button>`
+    + (S.fCocina ? `<button class="chip" data-act="clrF" data-f="fCocina" aria-label="Quitar filtro ${esc(S.fCocina)}">${esc(S.fCocina)} ×</button>` : "")
+    + (S.fUtens ? `<button class="chip" data-act="clrF" data-f="fUtens" aria-label="Quitar filtro ${esc(S.fUtens)}">${esc(S.fUtens)} ×</button>` : "");
+  const res = $("#results");
+  $("#count").textContent = S.loaded ? `${list.length} ${list.length===1?"receta":"recetas"}` : "";
+  if (S.noDb){
+    res.innerHTML = `<div class="empty"><h2>Abre el recetario en Claude</h2><p class="muted">Las recetas se guardan en tu cuenta de Claude. Abre este enlace desde la app o la web de Claude con la sesión iniciada para verlas y añadir nuevas.</p></div>`;
+    return;
+  }
+  if (!S.loaded){ res.innerHTML = `<div class="status"><span class="spin"></span>Abriendo el recetario…</div>`; return; }
+  if (!S.recetas.length){
+    res.innerHTML = `<div class="empty"><h2>Todavía no hay recetas</h2>
+      <p class="muted" style="margin:0">Las recetas se guardan en este móvil. Empieza poniendo tu nombre en <button class="linkbtn" data-act="settings">Ajustes</button> y añade recetas de varias formas:</p>
+      <ul><li>Pegar el texto de una receta o dictarla con el micrófono del teclado.</li>
+      <li>Subir fotos de una receta en papel o capturas de Instagram.</li>
+      <li>Importar un archivo que te haya mandado otra persona, o su recetario completo.</li></ul>
+      ${S.canWrite ? `<div class="row-btns"><button class="btn primary" data-act="add">${ICON.plus}Añadir la primera</button><button class="btn" data-act="import">Importar recetas</button></div>` : ""}</div>`;
+    return;
+  }
+  if (!list.length){
+    const msg = S.tab === "por_probar" ? "No hay recetas pendientes de probar con este filtro." : S.tab === "favoritas" ? "Ninguna favorita con este filtro. Marca una con el corazón." : "Ninguna receta coincide con la búsqueda.";
+    res.innerHTML = `<div class="empty"><p class="muted" style="margin:0">${msg}</p></div>`;
+    return;
+  }
+  res.innerHTML = `<ul class="cards">${list.map(cardHTML).join("")}</ul>`;
+}
+
+/* ---------- Detalle ---------- */
+function servingsFor(r){ return S.servings[r.id] ?? (r.raciones || 1); }
+function factorFor(r){ return r.raciones ? servingsFor(r)/r.raciones : servingsFor(r); }
+function ingLine(i, f){
+  const q = i.cantidad != null ? fmtQty(i.cantidad*f, i.unidad) : "";
+  const u = i.unidad && i.unidad !== "ud" ? i.unidad : "";
+  const qty = i.unidad === "al gusto" ? "al gusto" : [q, u].filter(Boolean).join(" ");
+  return {qty, name: i.nombre + (i.nota ? `, ${i.nota}` : "")};
+}
+function ingsHTML(r, interactive, pre){
+  pre = pre || "ck";
+  const f = factorFor(r);
+  let last = null, out = "";
+  (r.ingredientes||[]).forEach((i, idx) => {
+    if (i.grupo && i.grupo !== last){ out += `<li class="grp">${esc(i.grupo)}</li>`; }
+    last = i.grupo;
+    const {qty, name} = ingLine(i, f);
+    const k = r.id+":"+idx, done = !!S.checked[k];
+    out += `<li class="ing${done?" done":""}">${interactive ? `<input type="checkbox" id="${pre}-${idx}" data-act="check" data-k="${k}"${done?" checked":""} aria-label="Tachar ${esc(i.nombre)}">` : "<span></span>"}<span class="q">${esc(qty)}</span><label class="n" for="${pre}-${idx}">${esc(name)}</label></li>`;
+  });
+  return out || `<li class="muted small">Sin ingredientes. Pulsa Editar para añadirlos.</li>`;
+}
+function stepTimer(p){
+  if (p.temporizador_min) return p.temporizador_min;
+  const m = p.texto.match(/(\d+(?:[.,]\d+)?)(?:\s*(?:-|a|o)\s*(\d+(?:[.,]\d+)?))?\s*(minutos?|min\b|horas?|h\b)/i);
+  if (!m) return null;
+  const n = parseFloat((m[2]||m[1]).replace(",", "."));
+  return /^h/i.test(m[3]) ? n*60 : n;
+}
+function detailHTML(r){
+  const foto = r.fotos && r.fotos[0];
+  const t = r.tiempos || {};
+  const avg = avgRating(r);
+  const mine = S.uid && r.valoraciones ? r.valoraciones[S.uid] : null;
+  const src = r.fuente || {};
+  const srcLabel = {propia:"Receta de casa", web:"Web", instagram:"Instagram", tiktok:"TikTok", youtube:"YouTube", libro:"Libro", otro:"Otra fuente"}[src.tipo] || "Fuente";
+  const tried = r.estado === "probada"
+    ? `<div class="panel tried"><div class="phead"><h2>La hemos probado</h2>${avg ? `<span class="starline" style="font-size:1.1rem">${starsText(avg)} <b style="color:var(--ink)">${avg.toFixed(1).replace(".",",")}</b></span>` : ""}</div>
+        ${r.probadaEn ? `<p class="small muted" style="margin:0">Primera vez: ${esc(fmtDate(r.probadaEn))}</p>` : ""}
+        <div class="votes" id="votes"></div>
+        ${S.uid && S.canWrite ? `<div><span class="lbl">Tu nota</span><br>${starsInput(mine||0, "rate")}</div>` : ""}
+      </div>`
+    : `<div class="panel tried"><div class="phead"><h2>Por probar</h2></div><p class="small muted" style="margin:0">Cuando la cocinéis, márcala como probada y dadle nota.</p>${S.canWrite ? `<button class="btn ok block" data-act="markTried">La hemos probado</button>` : ""}</div>`;
+  const steps = (r.pasos||[]).map((p, i) => { const tm = stepTimer(p); return `<li><div><p>${esc(p.texto)}</p>${tm ? `<button class="tchip" data-act="timer" data-min="${tm}" data-label="${esc(r.titulo)} · paso ${i+1}">${ICON.clock}${fmtMin(tm)}</button>` : ""}${stepMedia(p)}</div></li>`; }).join("");
+  return `
+  <header class="top">
+    <button class="textbtn" data-act="back">${ICON.back.replace("<svg","<svg width='20' height='20'")}${S.backTo === "menu" ? "Menú" : "Recetas"}</button>
+    <span style="flex:1"></span>
+    ${S.canWrite ? `<button class="iconbtn fav" data-act="fav" aria-label="${r.favorita?"Quitar de favoritas":"Marcar como favorita"}" aria-pressed="${!!r.favorita}">${r.favorita?ICON.heartOn:ICON.heart}</button>` : ""}
+    <button class="iconbtn" data-act="recipeMenu" aria-label="Opciones de la receta">${ICON.dots}</button>
+  </header>
+  ${foto ? `<img class="hero" id="hero" src="${blobUrl(foto)}" alt="Foto de ${esc(r.titulo)}">` : ""}
+  ${(r.fotos||[]).length > 1 ? `<div class="gallery">${r.fotos.map((id,i) => `<button data-act="heroPick" data-id="${id}" aria-label="Ver foto ${i+1}"><img src="${blobUrl(id)}" alt="" loading="lazy"></button>`).join("")}</div>` : ""}
+  <div class="dhead">
+    <div>${r.estado==="probada" ? `<span class="pill ok">Probada</span>` : `<span class="pill wait">Por probar</span>`} ${r.categoria ? `<span class="pill" style="background:var(--surface-2);color:var(--ink-2)">${esc(CATS[r.categoria])}</span>` : ""}${r.cocina ? ` <span class="pill" style="background:var(--surface-2);color:var(--ink-2)">Cocina ${esc(r.cocina.toLowerCase())}</span>` : ""}${(r.utensilios||[]).map(u => ` <span class="pill" style="background:var(--cobalt-soft);color:var(--cobalt)">${esc(u)}</span>`).join("")}</div>
+    <h1>${esc(r.titulo)}</h1>
+    ${r.descripcion ? `<p>${esc(r.descripcion)}</p>` : ""}
+    <span class="src">${esc(srcLabel)}${src.autor ? ` · ${esc(src.autor)}` : ""}${src.url ? ` · <a href="${esc(src.url)}" target="_blank" rel="noopener">ver original</a>` : ""}</span>
+  </div>
+  <div class="metas">
+    <div><b>${fmtMin(t.preparacion_min)}</b><span>Prep.</span></div>
+    <div><b>${fmtMin(t.coccion_min)}</b><span>Cocción</span></div>
+    <div><b>${fmtMin(t.reposo_min)}</b><span>Reposo</span></div>
+    <div><b>${esc(r.dificultad || "–")}</b><span>Dificultad</span></div>
+  </div>
+  ${tried}
+  <section class="panel">
+    <div class="phead"><h2>Ingredientes</h2>
+      <div class="stepper"><button data-act="serv" data-d="-1" aria-label="Menos raciones">−</button><output>${r.raciones ? `${fmtQty(servingsFor(r))} ${servingsFor(r)===1?"ración":"raciones"}` : `× ${fmtQty(servingsFor(r))}`}</output><button data-act="serv" data-d="1" aria-label="Más raciones">+</button></div>
+    </div>
+    ${r.raciones && servingsFor(r) !== r.raciones ? `<p class="small muted" style="margin:0 0 4px">Cantidades recalculadas desde ${fmtQty(r.raciones)} raciones.</p>` : ""}
+    <ul class="ings">${ingsHTML(r, true)}</ul>
+  </section>
+  <section class="panel"><div class="phead"><h2>Preparación</h2></div>
+    ${steps ? `<ol class="steps">${steps}</ol>` : `<p class="muted small">Sin pasos todavía.</p>`}
+  </section>
+  ${r.notas ? `<section class="panel"><div class="phead"><h2>Notas</h2></div><p class="notes">${esc(r.notas)}</p></section>` : ""}
+  ${r.nuestraVersion ? `<section class="panel"><div class="phead"><h2>Nuestra versión</h2></div><p class="notes">${esc(r.nuestraVersion)}</p></section>` : ""}
+  ${(r.etiquetas||[]).length ? `<div class="chips" style="flex-wrap:wrap">${r.etiquetas.map(e=>`<span class="chip">${esc(e)}</span>`).join("")}</div>` : ""}
+  ${(r.pasos||[]).length ? `<div class="cookbar"><button class="btn primary" data-act="cook">Cocinar paso a paso</button></div>` : ""}`;
+}
+function stepMedia(p){
+  return p.foto ? `<img class="stepimg" src="${blobUrl(p.foto)}" alt="" loading="lazy">` : "";
+}
+function starsInput(val, act){
+  return `<span class="stars" role="radiogroup" aria-label="Nota de 1 a 5">${[1,2,3,4,5].map(n => `<button type="button" class="${n<=val?"on":""}" data-act="${act}" data-n="${n}" role="radio" aria-checked="${n===val}" aria-label="${n} ${n===1?"estrella":"estrellas"}">★</button>`).join("")}</span>`;
+}
+async function fillVoters(r){
+  const box = $("#votes"); if (!box) return;
+  const ids = Object.keys(r.valoraciones||{});
+  if (!ids.length){ box.innerHTML = `<p class="small muted" style="margin:0">Aún nadie le ha puesto nota.</p>`; return; }
+  let ps = {};
+  if (S.user) { try { ps = await S.user.profiles(ids); } catch(e){} }
+  if (!$("#votes")) return;
+  box.innerHTML = "";
+  ids.forEach(id => {
+    const p = ps[id] || {};
+    const row = document.createElement("div"); row.className = "vote";
+    if (p.avatarUrl){ const img = document.createElement("img"); img.src = p.avatarUrl; img.alt = ""; row.append(img); }
+    const name = document.createElement("span"); name.textContent = (id === S.uid ? "Tú" : (p.name || "Alguien de la familia"));
+    const st = document.createElement("span"); st.className = "starline"; st.textContent = starsText(r.valoraciones[id]);
+    row.append(name, st); box.append(row);
+  });
+}
+
+/* ---------- Hojas (modales) ---------- */
+let sheetY = 0;
+function openSheet(html, onOpen){
+  const ov = $("#overlay");
+  if (!ov.innerHTML) sheetY = window.scrollY;
+  ov.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="sheethead"><button class="textbtn" data-act="closeSheet">${ICON.back.replace("<svg","<svg width='20' height='20'")}Volver</button></div><div class="inner">${html}</div></div>`;
+  $("#view").hidden = true;
+  window.scrollTo(0, 0);
+  try { ov.scrollIntoView({block: "start"}); } catch(e){}
+  onOpen && onOpen($("#overlay .sheet"));
+}
+function closeSheet(){
+  if (S.aiCtl) { try{ S.aiCtl.abort(); }catch(e){} S.aiCtl = null; }
+  const was = !!$("#overlay").innerHTML;
+  $("#overlay").innerHTML = ""; $("#view").hidden = false;
+  if (was) window.scrollTo(0, sheetY);
+}
+function confirmSheet(title, text, okLabel, onOk, danger){
+  openSheet(`<h2>${esc(title)}</h2><p class="hint">${esc(text)}</p><div class="row-btns"><button class="btn ${danger?"danger":"primary"}" id="cf-ok">${esc(okLabel)}</button><button class="btn" data-act="closeSheet">Cancelar</button></div>`,
+    sh => { $("#cf-ok", sh).onclick = async () => { $("#cf-ok", sh).disabled = true; await onOk(); }; });
+}
+
+function mainMenu(){
+  openSheet(`<h2>Recetario</h2><div class="menu">
+    <button data-act="openMenu">Menú semanal<span>Reparte las recetas en la semana, con batch cooking y lista de la compra</span></button>
+    ${S.canWrite ? `<button data-act="classify">Clasificar por cocina y aparatos<span>Rellena estos datos en las recetas que aún no los tienen</span></button>` : ""}
+    ${S.canWrite ? `<button data-act="import">Importar recetas<span>Recetas sueltas, el recetario completo de otra persona o la respuesta de otra IA</span></button>` : ""}
+    <button data-act="backup">Compartir el recetario completo<span>Todas las recetas, notas y fotos en un archivo para la familia</span></button>
+    <button data-act="settings">Ajustes<span>Tu nombre y la IA para ordenar recetas</span></button>
+    <button data-act="promptIA">Prompt para otras IAs<span>Para que tus amigos conviertan recetas con ChatGPT, Gemini…</span></button>
+    <button data-act="exportAll" data-fmt="html">Exportar lo que se ve como libro HTML<span>Se abre en cualquier móvil; se puede mandar por WhatsApp</span></button>
+    <button data-act="exportAll" data-fmt="json">Exportar lo que se ve como JSON<span>Copia de seguridad o para importar en otro recetario</span></button>
+  </div>`);
+}
+function recipeMenu(){
+  const r = getR(S.currentId); if (!r) return;
+  openSheet(`<h2>${esc(r.titulo)}</h2><div class="menu">
+    ${S.canWrite ? `<button data-act="edit">Editar receta</button>` : ""}
+    <button data-act="exportOne" data-fmt="html">Exportar como HTML<span>Ficha bonita para leer o mandar por WhatsApp</span></button>
+    <button data-act="exportOne" data-fmt="json">Exportar como JSON</button>
+    <button data-act="copyRecipe">Copiar como texto<span>Para pegarla en un mensaje</span></button>
+    ${S.canWrite && r.estado === "probada" ? `<button data-act="untry">Volver a "Por probar"</button>` : ""}
+    ${S.canWrite ? `<button data-act="delete" style="color:var(--danger)">Eliminar receta</button>` : ""}
+  </div>`);
+}
+function promptSheet(){
+  openSheet(`<h2>Prompt para otras IAs</h2>
+    <p class="hint">Para quien no tenga una IA configurada en la app: copia este texto en ChatGPT, Gemini u otra IA, y después dicta, pega o fotografía la receta. La IA devolverá un JSON; cópialo y pégalo en <b>Importar recetas</b>.</p>
+    <p class="hint">Las IAs no suelen poder abrir enlaces de Instagram o TikTok: mejor pegar el texto del post o subir una captura.</p>
+    <pre class="prompt" id="promptText">${esc(PROMPT_IA)}</pre>
+    <textarea id="promptCopy" style="position:absolute;left:-9999px" aria-hidden="true">${esc(PROMPT_IA)}</textarea>
+    <button class="btn primary block" data-act="copyPrompt">Copiar prompt</button>`);
+}
+
+/* ---------- Añadir receta con Claude ---------- */
+function addSheet(pre){
+  pre = pre || {};
+  const ai = !!S.sample;
+  openSheet(`<h2>Añadir receta</h2>
+    <p class="hint">${ai ? "Pega el texto, díctalo con el micrófono del teclado o sube fotos. La IA lo ordena en ingredientes, pasos y tiempos, y tú lo revisas antes de guardar." : "Pega o dicta la receta. Sin IA configurada: copia el texto con el prompt, pégalo en ChatGPT o Gemini y trae aquí el JSON que te devuelva con «Importar JSON»."}</p>
+    <div class="field"><label class="lbl" for="ai-text">Texto o dictado</label>
+      <textarea id="ai-text" rows="6" placeholder="Ej.: Bizcocho de yogur. Tres huevos, un yogur natural, la medida del yogur de aceite, dos de azúcar y tres de harina, un sobre de levadura. Batir los huevos con el azúcar… horno a 180 grados 35 minutos.">${esc(pre.text || "")}</textarea></div>
+    ${ai ? `<div class="field"><label class="lbl" for="ai-files">Fotos o capturas (hasta ${S.maxImages})</label>
+      <input id="ai-files" type="file" accept="image/*" multiple><span class="hint" id="ai-files-n">Papel, libro, notas del móvil o capturas de Instagram y TikTok.</span></div>` : ""}
+    <div class="field"><label class="lbl" for="ai-url">Enlace de origen (opcional)</label>
+      <input id="ai-url" type="url" inputmode="url" placeholder="https://www.instagram.com/p/…" value="${esc(pre.url || "")}"></div>
+    <p class="hint">La IA no puede abrir Instagram ni TikTok: pega también el texto del post o sube una captura. Si solo tienes el enlace, pulsa «Guardar enlace para después». También puedes pegar varios enlaces a la vez en el cuadro de texto.</p>
+    <div id="ai-status"></div>
+    ${ai ? `<div class="row-btns"><button class="btn primary" id="ai-go">Ordenar con IA</button><button class="btn" data-act="saveLinks">Guardar enlace para después</button><button class="btn" data-act="manualPre">Escribir a mano</button></div>`
+      : `<div class="row-btns"><button class="btn primary" id="ai-copy">Copiar con el prompt</button><button class="btn" data-act="import">Importar JSON</button><button class="btn" data-act="saveLinks">Guardar enlace para después</button><button class="btn" data-act="manualPre">Escribir a mano</button></div>
+      <p class="hint">También puedes configurar una IA gratuita en <button class="linkbtn" data-act="settings">Ajustes</button>.</p>`}
+  `, sh => {
+    const files = $("#ai-files", sh);
+    if (files) files.onchange = () => { $("#ai-files-n", sh).textContent = files.files.length ? `${files.files.length} ${files.files.length===1?"imagen elegida":"imágenes elegidas"}` : "Papel, libro, notas del móvil o capturas de Instagram y TikTok."; };
+    const goBtn = $("#ai-go", sh); if (goBtn) goBtn.onclick = () => runAI(sh);
+    const cp = $("#ai-copy", sh);
+    if (cp) cp.onclick = () => { const t = $("#ai-text", sh).value.trim(), u = $("#ai-url", sh).value.trim(); copyText(PROMPT_IA + "\n\nRECETA:\n" + (t || "(te la dicto a continuación)") + (u ? "\nFuente: " + u : "")); };
+  });
+}
+function aiPrompt(text, url, nImg){
+  return `Eres el asistente de un recetario familiar español. Convierte el material que te doy en una receta estructurada.
+El material puede ser texto pegado de una web o de Instagram, un dictado hablado (desordenado, con muletillas) o ${nImg ? `${nImg} imagen(es) adjunta(s): capturas, fotos de un libro, de una nota en papel o del plato` : "texto"}.
+
+Responde SOLO con JSON con esta estructura:
+${SCHEMA}
+
+Reglas:
+${RULES}
+- Si el material contiene varias recetas distintas, devuelve varias en "recetas".
+- Ordena el dictado en pasos lógicos, sin añadir ingredientes ni cantidades que no se mencionen.
+- Medidas caseras sin peso ("un vaso", "la medida del yogur"): cantidad en número y la medida en "unidad" tal cual (p. ej. "vaso de yogur").
+- Si no se indica la fuente, usa "propia"${url ? `; el enlace de origen es ${url}` : ""}.
+- Añade a cada receta el campo "foto_plato": el índice (empezando en 0) de la imagen que muestra el plato terminado, o null si ninguna lo muestra. Las capturas de texto no cuentan.
+- No hagas preguntas: si falta un dato, pon null.
+
+MATERIAL:
+${text ? text.slice(0, 40000) : "(solo imágenes)"}`;
+}
+async function runAI(sh){
+  const text = $("#ai-text", sh).value.trim();
+  const url = ($("#ai-url", sh).value || "").trim();
+  const fileInput = $("#ai-files", sh);
+  const files = fileInput ? Array.from(fileInput.files).slice(0, S.maxImages) : [];
+  const st = $("#ai-status", sh), goBtn = $("#ai-go", sh);
+  const onlyLinks = /^\s*(https?:\/\/\S+\s*)+$/.test(text);
+  if ((!text || onlyLinks) && !files.length){
+    st.innerHTML = url || onlyLinks
+      ? `<p class="err">Instagram y TikTok no dejan leer la receta solo con el enlace. Pega el texto del post, sube una captura o pulsa «Guardar enlace para después».</p>`
+      : `<p class="err">Pega o dicta la receta, o elige alguna foto.</p>`;
+    return;
+  }
+  const ctl = new AbortController(); S.aiCtl = ctl;
+  goBtn.disabled = true;
+  st.innerHTML = `<div class="status"><span class="spin"></span><span id="ai-msg">La IA está leyendo la receta…</span><span style="flex:1"></span><button class="textbtn" id="ai-stop">Parar</button></div>`;
+  $("#ai-stop", sh).onclick = () => ctl.abort();
+  try {
+    const opts = {signal: ctl.signal};
+    if (files.length) opts.images = files;
+    const out = await S.sample.json(aiPrompt(text, url, files.length), opts);
+    const raw = out && Array.isArray(out.recetas) ? out.recetas : Array.isArray(out) ? out : [out];
+    const recs = raw.map(x => ({rec: normReceta(x), foto: Number.isInteger(x && x.foto_plato) ? x.foto_plato : null}));
+    if (!recs.length || !recs[0].rec.titulo) throw {code:"invalid_json"};
+    if (url) recs.forEach(o => { if (!o.rec.fuente.url) o.rec.fuente.url = url; if (o.rec.fuente.tipo === "propia") o.rec.fuente.tipo = /instagram/.test(url) ? "instagram" : /tiktok/.test(url) ? "tiktok" : /youtu/.test(url) ? "youtube" : "web"; });
+    S.aiCtl = null;
+    if (recs.length > 1){
+      $("#ai-msg", sh).textContent = `Guardando ${recs.length} recetas…`;
+      for (const o of recs){
+        let fotos = [];
+        if (o.foto != null && files[o.foto] && S.assets){ try { fotos = [await uploadImage(files[o.foto])]; } catch(e){} }
+        await createRecipe(o.rec, fotos);
+      }
+      closeSheet(); toast(`${recs.length} recetas añadidas a Por probar`); S.tab = "por_probar"; go("list");
+      return;
+    }
+    const o = recs[0]; let fotos = [];
+    if (o.foto != null && files[o.foto] && S.assets){ $("#ai-msg", sh).textContent = "Subiendo la foto del plato…"; try { fotos = [await uploadImage(files[o.foto])]; } catch(e){} }
+    closeSheet();
+    openEditor({...o.rec, fotos}, true);
+    toast("Revisa la receta y guárdala");
+  } catch(e){
+    S.aiCtl = null; goBtn.disabled = false;
+    const c = e && e.code;
+    if (c === "cancelled"){ st.innerHTML = ""; return; }
+    const msg = {
+      not_granted: "Configura una IA en Ajustes o escribe la receta a mano.",
+      sampling_disabled: "Configura una IA en Ajustes.",
+      rate_limited: "Has hecho muchas peticiones seguidas o has llegado a tu límite de uso. Prueba dentro de un rato.",
+      image_rejected: "Alguna imagen no se puede leer. Prueba con otra foto o captura.",
+      images_unavailable: "Desde aquí no se pueden enviar imágenes. Pega el texto.",
+      invalid_json: "La IA no ha devuelto una receta clara. Prueba con más texto o una captura más nítida.",
+      refused: "La IA no ha podido procesar ese contenido.",
+      prompt_too_large: "El texto es demasiado largo. Pega solo la receta.",
+      session_expired: "Vuelve a intentarlo."
+    }[c] || aiErrMsg(e);
+    st.innerHTML = `<p class="err">${esc(msg)}</p>`;
+  }
+}
+
+function tipoFromUrl(u){ return /instagram/.test(u) ? "instagram" : /tiktok/.test(u) ? "tiktok" : /youtu/.test(u) ? "youtube" : u ? "web" : "propia"; }
+function linksFrom(...t){ return [...new Set((t.join(" ").match(/https?:\/\/[^\s<>"']+/g) || []).map(x => x.replace(/[),.;]+$/, "")))]; }
+async function saveLinks(){
+  const t = ($("#ai-text") && $("#ai-text").value) || "", u = ($("#ai-url") && $("#ai-url").value) || "";
+  const links = linksFrom(u, t);
+  if (!links.length){ toast("Pega primero el enlace"); return; }
+  if (links.length === 1){
+    const notas = t.replace(links[0], "").trim();
+    closeSheet(); openEditor(normReceta({titulo: "", notas, fuente: {tipo: tipoFromUrl(links[0]), url: links[0]}}), true);
+    toast("Ponle un título y guárdala"); return;
+  }
+  closeSheet(); toast(`Guardando ${links.length} enlaces…`);
+  try {
+    let n = 0;
+    for (const l of links){
+      let host = "web"; try { host = new URL(l).hostname.replace(/^www\./, ""); } catch(e){}
+      await createRecipe({...normReceta({titulo: `Pendiente ${++n} · ${host}`, fuente: {tipo: tipoFromUrl(l), url: l}}), estado: "por_probar"}, []);
+    }
+    toast(`${links.length} enlaces guardados en «Por probar»`); S.tab = "por_probar"; go("list");
+  } catch(e){ toast(dbErr(e)); }
+}
+
+/* ---------- Importar ---------- */
+function importSheet(){
+  S.impRaw = null;
+  openSheet(`<h2>Importar recetas</h2>
+    <p class="hint">Sube el archivo .json o .html que te hayan mandado, o pega aquí la respuesta de ChatGPT, Gemini u otra IA.</p>
+    <div class="field"><label class="lbl" for="imp-file">Archivo</label><input id="imp-file" type="file" accept=".json,.html,.htm,.txt,application/json,text/html,text/plain"></div>
+    <div class="field"><label class="lbl" for="imp-text">O pega el JSON</label><textarea id="imp-text" rows="5" placeholder='{"formato": "recetario-v1", "recetas": [ … ] }'></textarea></div>
+    <div id="imp-out"></div>
+    <div class="row-btns"><button class="btn primary" id="imp-read">Leer recetas</button><button class="btn" data-act="promptIA">Ver el prompt</button></div>`,
+  sh => {
+    $("#imp-file", sh).onchange = async e => { const f = e.target.files[0]; if (!f) return; const t = await f.text(); const ta = $("#imp-text", sh);
+      if (t.length > 200000){ S.impRaw = t; ta.value = ""; ta.placeholder = "Archivo cargado: " + f.name; } else { S.impRaw = null; ta.value = t; } readImport(sh); };
+    $("#imp-text", sh).oninput = () => { S.impRaw = null; };
+    $("#imp-read", sh).onclick = () => readImport(sh);
+  });
+}
+function readImport(sh){
+  const out = $("#imp-out", sh);
+  let recs;
+  const raw = S.impRaw || $("#imp-text", sh).value;
+  try { const o = JSON.parse(raw); if (o && o.formato === "recetario-copia-v1") return mergePreview(sh, o); } catch(e){}
+  try { recs = extractJSON(raw); }
+  catch(e){ out.innerHTML = `<p class="err">${esc(e.message)}</p>`; return; }
+  if (!recs.length){ out.innerHTML = `<p class="err">No hay recetas en ese contenido.</p>`; return; }
+  const existing = new Set(S.recetas.map(r => deacc(r.titulo.toLowerCase())));
+  out.innerHTML = `<span class="lbl">${recs.length} ${recs.length===1?"receta encontrada":"recetas encontradas"}</span>
+    <ul class="prev">${recs.map((r,i) => { const dup = existing.has(deacc(r.titulo.toLowerCase())); return `<li><label><input type="checkbox" id="imp-${i}" data-i="${i}"${dup?"":" checked"}><span><b>${esc(r.titulo)}</b><br><span class="small muted">${r.ingredientes.length} ingredientes · ${r.pasos.length} pasos${r.foto_data?" · con foto":""}</span>${dup?`<br><span class="warn">Ya tienes una receta con este nombre</span>`:""}</span></label></li>`; }).join("")}</ul>
+    <button class="btn primary block" id="imp-save" style="margin-top:10px">Añadir a "Por probar"</button>`;
+  $("#imp-save", sh).onclick = async () => {
+    const chosen = $$(".prev input", sh).filter(c => c.checked).map(c => recs[+c.dataset.i]);
+    if (!chosen.length){ toast("Marca al menos una receta"); return; }
+    const btn = $("#imp-save", sh); btn.disabled = true;
+    try {
+      let n = 0;
+      for (const r of chosen){
+        btn.textContent = `Guardando ${++n} de ${chosen.length}…`;
+        let fotos = [];
+        if (r.foto_data && S.assets){ try { fotos = [await uploadImage(await dataURLToBlob(r.foto_data))]; } catch(e){} }
+        const pasos = [];
+        for (const ps of r.pasos){ const {foto_data, ...q} = ps; if (foto_data && S.assets){ try { q.foto = await uploadImage(await dataURLToBlob(foto_data)); } catch(e){} } pasos.push(q); }
+        await createRecipe({...r, pasos, estado:"por_probar"}, fotos);
+      }
+      closeSheet(); toast(`${chosen.length} ${chosen.length===1?"receta importada":"recetas importadas"}`);
+      S.tab = "por_probar"; go("list");
+    } catch(e){ btn.disabled = false; btn.textContent = `Añadir a "Por probar"`; out.insertAdjacentHTML("beforeend", `<p class="err">${esc(dbErr(e))}</p>`); }
+  };
+}
+
+/* ---------- Editor ---------- */
+let rowSeq = 0;
+function openEditor(r, isNew){
+  S.draft = {id: isNew ? null : r.id, base: r, fotos: [...(r.fotos||[])], removed: [], added: [], estado: r.estado || "por_probar", utensilios: [...(r.utensilios||[])]};
+  go("edit");
+}
+function ingRow(i){ const n = ++rowSeq; return `<div class="irow" data-kind="ing">
+  <input class="i-cant" id="ic-${n}" inputmode="decimal" placeholder="Cant." value="${i.cantidad ?? ""}" aria-label="Cantidad">
+  <input class="i-unid" id="iu-${n}" list="units" placeholder="Unidad" value="${esc(i.unidad||"")}" aria-label="Unidad">
+  <input class="i-nombre" id="in-${n}" placeholder="Ingrediente" value="${esc(i.nombre||"")}" aria-label="Ingrediente">
+  <button type="button" class="del" data-act="delRow" aria-label="Quitar">×</button>
+  <input class="i-nota" id="io-${n}" placeholder="Nota (picada, a temperatura ambiente…)" value="${esc(i.nota||"")}" aria-label="Nota del ingrediente"></div>`; }
+function grpRow(g){ const n = ++rowSeq; return `<div class="irow grp" data-kind="grupo"><input id="ig-${n}" placeholder="Subtítulo: Masa, Relleno, Salsa…" value="${esc(g||"")}" aria-label="Subtítulo de grupo"><button type="button" class="del" data-act="delRow" aria-label="Quitar">×</button></div>`; }
+function stepMediaHTML(m){
+  const f = m.foto;
+  return f ? `<div class="ph sm"><img src="${blobUrl(f)}" alt=""><button type="button" data-act="rmStepMedia" data-k="foto" aria-label="Quitar foto del paso">×</button></div>`
+    : S.assets ? `<label class="mbtn">+ Foto del paso<input type="file" accept="image/*" data-step-media="foto"></label>` : "";
+}
+function stepRow(p){ const n = ++rowSeq; return `<div class="prow" data-foto="${esc(p.foto||"")}"><textarea id="ps-${n}" placeholder="Describe el paso" aria-label="Paso">${esc(p.texto||"")}</textarea><button type="button" class="del" data-act="delRow" aria-label="Quitar paso">×</button>
+  <label class="tmin" for="pt-${n}">Temporizador <input id="pt-${n}" inputmode="decimal" placeholder="min" value="${p.temporizador_min ?? ""}"> min</label>
+  <div class="pmedia">${stepMediaHTML(p)}</div></div>`; }
+function photosHTML(){
+  const d = S.draft;
+  return d.fotos.map((id, i) => `<div class="ph"><img src="${blobUrl(id)}" alt="">${i===0?"<em>Portada</em>":""}<button type="button" data-act="rmPhoto" data-id="${id}" aria-label="Quitar foto">×</button></div>`).join("")
+    + (S.assets ? `<label class="addph"><input type="file" id="ph-in" accept="image/*" multiple data-act-change="addPhotos">Añadir<br>fotos</label>` : `<p class="hint">Solo quien puede editar el recetario sube fotos.</p>`);
+}
+function editHTML(){
+  const r = S.draft.base, t = r.tiempos || {}, f = r.fuente || {};
+  let ingRows = "", last = null;
+  (r.ingredientes||[]).forEach(i => { if (i.grupo && i.grupo !== last) ingRows += grpRow(i.grupo); last = i.grupo; ingRows += ingRow(i); });
+  if (!ingRows) ingRows = ingRow({}) + ingRow({}) + ingRow({});
+  const steps = (r.pasos && r.pasos.length ? r.pasos : [{},{}]).map(stepRow).join("");
+  return `
+  <header class="top"><button class="textbtn" data-act="cancelEdit">${ICON.back.replace("<svg","<svg width='20' height='20'")}Cancelar</button><span style="flex:1"></span><h2 style="font-size:1.2rem">${S.draft.id ? "Editar receta" : "Nueva receta"}</h2></header>
+  <form id="editform" class="form" novalidate>
+    <div class="field"><label class="lbl" for="e-titulo">Título</label><input id="e-titulo" value="${esc(r.titulo === "Receta sin título" ? "" : r.titulo||"")}" placeholder="Ej.: Empanada de zamburiñas" required></div>
+    <div class="field"><label class="lbl">Estado</label><div class="seg" id="e-estado">
+      <button type="button" data-act="setEstado" data-v="por_probar" aria-pressed="${S.draft.estado!=="probada"}">Por probar</button>
+      <button type="button" data-act="setEstado" data-v="probada" aria-pressed="${S.draft.estado==="probada"}">Ya la hemos probado</button></div></div>
+    <div class="field"><span class="lbl">Fotos (la primera es la portada)</span><div class="photos" id="photos">${photosHTML()}</div></div>
+    <div class="field"><label class="lbl" for="e-desc">Descripción</label><textarea id="e-desc" rows="2">${esc(r.descripcion||"")}</textarea></div>
+    <div class="grid2">
+      <div class="field"><label class="lbl" for="e-cat">Categoría</label><select id="e-cat"><option value="">Sin categoría</option>${CAT_KEYS.map(k=>`<option value="${k}"${r.categoria===k?" selected":""}>${CATS[k]}</option>`).join("")}</select></div>
+      <div class="field"><label class="lbl" for="e-dif">Dificultad</label><select id="e-dif"><option value="">–</option>${["fácil","media","difícil"].map(d=>`<option${r.dificultad===d?" selected":""}>${d}</option>`).join("")}</select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label class="lbl" for="e-rac">Raciones</label><input id="e-rac" inputmode="decimal" value="${r.raciones ?? ""}"></div>
+      <div class="field"><label class="lbl" for="e-tags">Etiquetas</label><input id="e-tags" value="${esc((r.etiquetas||[]).join(", "))}" placeholder="niños, verano, rápida"></div>
+    </div>
+    <div class="field"><label class="lbl" for="e-cocina">Cocina</label><select id="e-cocina"><option value="">Sin indicar</option>${(r.cocina && !COCINAS.includes(r.cocina) ? [r.cocina] : []).concat(COCINAS).map(c => `<option${r.cocina===c?" selected":""}>${esc(c)}</option>`).join("")}</select></div>
+    <div class="field"><span class="lbl">Aparatos y utensilios</span><div class="chips" style="flex-wrap:wrap" id="e-utens">${utensChips()}</div></div>
+    <div class="grid3">
+      <div class="field"><label class="lbl" for="e-prep">Prep. (min)</label><input id="e-prep" inputmode="decimal" value="${t.preparacion_min ?? ""}"></div>
+      <div class="field"><label class="lbl" for="e-coc">Cocción (min)</label><input id="e-coc" inputmode="decimal" value="${t.coccion_min ?? ""}"></div>
+      <div class="field"><label class="lbl" for="e-rep">Reposo (min)</label><input id="e-rep" inputmode="decimal" value="${t.reposo_min ?? ""}"></div>
+    </div>
+    <div class="panel" style="margin:0"><div class="phead"><h2>Ingredientes</h2></div>
+      <div id="ing-list">${ingRows}</div>
+      <div class="row-btns" style="margin-top:10px"><button type="button" class="btn" data-act="addIng">+ Ingrediente</button><button type="button" class="btn" data-act="addGrp">+ Subtítulo</button></div></div>
+    <div class="panel" style="margin:0"><div class="phead"><h2>Pasos</h2></div>
+      <div id="step-list">${steps}</div>
+      <div class="row-btns" style="margin-top:10px"><button type="button" class="btn" data-act="addStep">+ Paso</button></div></div>
+    <div class="field"><label class="lbl" for="e-notas">Notas de la receta</label><textarea id="e-notas" rows="3">${esc(r.notas||"")}</textarea></div>
+    <div class="field"><label class="lbl" for="e-nv">Nuestra versión</label><textarea id="e-nv" rows="3" placeholder="Qué cambiamos: menos azúcar, 5 minutos más de horno…">${esc(r.nuestraVersion||"")}</textarea></div>
+    <div class="grid2">
+      <div class="field"><label class="lbl" for="e-ftipo">Fuente</label><select id="e-ftipo">${[["propia","Receta de casa"],["web","Web"],["instagram","Instagram"],["tiktok","TikTok"],["youtube","YouTube"],["libro","Libro"],["otro","Otra"]].map(([k,l])=>`<option value="${k}"${(f.tipo||"propia")===k?" selected":""}>${l}</option>`).join("")}</select></div>
+      <div class="field"><label class="lbl" for="e-fautor">Autor</label><input id="e-fautor" value="${esc(f.autor||"")}" placeholder="La abuela, @cuenta…"></div>
+    </div>
+    <div class="field"><label class="lbl" for="e-furl">Enlace original</label><input id="e-furl" type="url" inputmode="url" value="${esc(f.url||"")}"></div>
+    <p class="err" id="e-err" hidden></p>
+    <div class="savebar"><button type="button" class="btn" data-act="cancelEdit">Cancelar</button><button type="submit" class="btn primary" id="e-save">Guardar receta</button></div>
+  </form>`;
+}
+function utensChips(){
+  const sel = S.draft ? S.draft.utensilios : [];
+  return [...new Set(UTENSILIOS.concat(sel))].map(u => `<button type="button" class="chip" data-act="tUtens" data-u="${esc(u)}" aria-pressed="${sel.includes(u)}">${esc(u)}</button>`).join("");
+}
+function collectDraft(){
+  const g = id => ($("#"+id)?.value || "").trim();
+  const ingredientes = []; let grupo = null;
+  $$("#ing-list > .irow").forEach(row => {
+    if (row.dataset.kind === "grupo"){ grupo = row.querySelector("input").value.trim() || null; return; }
+    const nombre = $(".i-nombre", row).value.trim(); if (!nombre) return;
+    ingredientes.push({grupo, cantidad: num($(".i-cant", row).value), unidad: $(".i-unid", row).value.trim(), nombre, nota: $(".i-nota", row).value.trim()});
+  });
+  const pasos = $$("#step-list > .prow").map(row => ({texto: $("textarea", row).value.trim(), temporizador_min: num($(".tmin input", row).value), foto: row.dataset.foto || null})).filter(p => p.texto);
+  return {
+    titulo: g("e-titulo"), descripcion: g("e-desc"), categoria: g("e-cat") || null, dificultad: g("e-dif") || null,
+    raciones: num(g("e-rac")), etiquetas: g("e-tags").split(",").map(s=>s.trim()).filter(Boolean),
+    tiempos: {preparacion_min: num(g("e-prep")), coccion_min: num(g("e-coc")), reposo_min: num(g("e-rep"))},
+    ingredientes, pasos, notas: g("e-notas"), nuestraVersion: g("e-nv"),
+    cocina: g("e-cocina") || null, utensilios: [...S.draft.utensilios],
+    fuente: {tipo: g("e-ftipo") || "propia", url: g("e-furl") || null, autor: g("e-fautor") || null},
+    estado: S.draft.estado, fotos: S.draft.fotos
+  };
+}
+async function saveDraft(){
+  const d = collectDraft(), err = $("#e-err"), btn = $("#e-save");
+  if (!d.titulo){ err.textContent = "Ponle un título a la receta."; err.hidden = false; $("#e-titulo").focus(); return; }
+  btn.disabled = true; btn.textContent = "Guardando…"; err.hidden = true;
+  try {
+    let id = S.draft.id;
+    if (!id){ id = await createRecipe(d, d.fotos); }
+    else {
+      const prev = getR(id) || {};
+      const patch = {...d};
+      if (d.estado === "probada" && !prev.probadaEn) patch.probadaEn = today();
+      await S.db.doc("recetas/"+id).set(JSON.parse(JSON.stringify({...prev, ...patch, id: undefined, actualizadaEn: new Date().toISOString()})));
+    }
+    if (S.assets) for (const a of S.draft.removed) { try { await S.assets.delete(a); } catch(e){} }
+    S.draft = null; toast("Receta guardada"); go("detail", id);
+  } catch(e){ btn.disabled = false; btn.textContent = "Guardar receta"; err.textContent = dbErr(e); err.hidden = false; }
+}
+
+/* ---------- Modo cocina ---------- */
+function openCook(){
+  S.cookOpen = true; S.cookStep = 0; renderCook();
+  try { navigator.wakeLock?.request("screen").then(l => { S.wakeLock = l; }).catch(()=>{}); } catch(e){}
+}
+function closeCook(){ S.cookOpen = false; S.cookIngs = false; $("#cook")?.remove(); try { S.wakeLock?.release(); } catch(e){} S.wakeLock = null; if (S.view === "detail") render(); }
+function renderCook(){
+  const r = getR(S.currentId); if (!r){ closeCook(); return; }
+  const pasos = r.pasos || []; const n = pasos.length;
+  let el = $("#cook");
+  if (!el){ el = document.createElement("div"); el.id = "cook"; el.className = "cook"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true"); document.body.append(el); }
+  const i = Math.min(S.cookStep, n); // n = pantalla final
+  let body;
+  if (S.cookIngs){
+    body = `<h2>Ingredientes · ${r.raciones ? fmtQty(servingsFor(r))+" raciones" : "× "+fmtQty(servingsFor(r))}</h2><ul class="ings cings">${ingsHTML(r, true, "cc")}</ul>`;
+  } else if (i >= n){
+    body = `<span class="num">Terminado</span><p class="txt">¡Que aproveche!</p>${r.estado !== "probada" && S.canWrite ? `<button class="btn ok" data-act="markTried">La hemos probado</button>` : ""}`;
+  } else {
+    const p = pasos[i], tm = stepTimer(p);
+    body = `<span class="num">Paso ${i+1} de ${n}</span><p class="txt">${esc(p.texto)}</p>${tm ? `<button class="tchip" style="font-size:1rem;padding:8px 16px;align-self:flex-start" data-act="timer" data-min="${tm}" data-label="Paso ${i+1}">${ICON.clock}Temporizador ${fmtMin(tm)}</button>` : ""}${stepMedia(p)}`;
+  }
+  el.innerHTML = `<div class="ctop"><button class="iconbtn" data-act="closeCook" aria-label="Salir del modo cocina">${ICON.close}</button><h2>${esc(r.titulo)}</h2>
+      <button class="iconbtn" data-act="cookIngs" aria-pressed="${!!S.cookIngs}" aria-label="Ver ingredientes">${ICON.list}</button></div>
+    <div class="prog"><i style="width:${n ? Math.round(Math.min(i,n)/n*100) : 0}%"></i></div>
+    <div class="cbody">${body}
+    <div class="cnav"><button class="btn" data-act="cookPrev"${i===0 && !S.cookIngs?" disabled":""}>Anterior</button><button class="btn primary" data-act="cookNext"${i>=n && !S.cookIngs?" disabled":""}>${S.cookIngs ? "Volver al paso" : i >= n-1 ? "Terminar" : "Siguiente"}</button></div></div>`;
+}
+
+/* ---------- Temporizadores ---------- */
+function startTimer(min, label){
+  try { if (!S.audio) S.audio = new (window.AudioContext || window.webkitAudioContext)(); S.audio.resume?.(); } catch(e){}
+  S.timers.push({id: Date.now()+Math.random(), label, end: Date.now() + min*60000, done: false});
+  renderTimers();
+  if (!S.tick) S.tick = setInterval(tickTimers, 1000);
+  toast(`Temporizador de ${fmtMin(min)} en marcha`);
+}
+function beep(){
+  try { const a = S.audio; if (!a) return; [0, .45, .9].forEach(t => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; o.connect(g); g.connect(a.destination); g.gain.setValueAtTime(.0001, a.currentTime+t); g.gain.exponentialRampToValueAtTime(.4, a.currentTime+t+.02); g.gain.exponentialRampToValueAtTime(.0001, a.currentTime+t+.35); o.start(a.currentTime+t); o.stop(a.currentTime+t+.4); }); } catch(e){}
+  try { navigator.vibrate?.([300,150,300,150,300]); } catch(e){}
+}
+function tickTimers(){
+  const now = Date.now();
+  S.timers.forEach(t => { if (!t.done && now >= t.end){ t.done = true; beep(); t.lastBeep = now; } else if (t.done && now - (t.lastBeep||0) > 8000){ beep(); t.lastBeep = now; } });
+  if (!S.timers.length){ clearInterval(S.tick); S.tick = null; }
+  renderTimers();
+}
+function renderTimers(){
+  $("#timers").innerHTML = S.timers.map(t => {
+    const left = Math.max(0, Math.round((t.end - Date.now())/1000));
+    const mm = String(Math.floor(left/60)).padStart(2,"0"), ss = String(left%60).padStart(2,"0");
+    return `<div class="timer${t.done?" done":""}" role="timer"><b>${t.done ? "¡Listo!" : mm+":"+ss}</b><span>${esc(t.label)}</span><button data-act="stopTimer" data-id="${t.id}">${t.done ? "Parar" : "Quitar"}</button></div>`;
+  }).join("");
+}
+
+/* ---------- Exportar ---------- */
+function recipeText(r){
+  const f = factorFor(r);
+  const lines = [r.titulo.toUpperCase()];
+  if (r.descripcion) lines.push(r.descripcion);
+  const t = r.tiempos||{}; const meta = [];
+  if (r.raciones) meta.push(`${fmtQty(servingsFor(r))} raciones`);
+  if (totalMin(r)) meta.push(`Tiempo total: ${fmtMin(totalMin(r))}`);
+  if (meta.length) lines.push(meta.join(" · "));
+  lines.push("", "INGREDIENTES"); let last = null;
+  (r.ingredientes||[]).forEach(i => { if (i.grupo && i.grupo !== last) lines.push(`${i.grupo}:`); last = i.grupo; const {qty,name} = ingLine(i, f); lines.push(`- ${qty ? qty+" " : ""}${name}`); });
+  lines.push("", "PREPARACIÓN");
+  (r.pasos||[]).forEach((p,i) => lines.push(`${i+1}. ${p.texto}`));
+  if (r.nuestraVersion) lines.push("", "NUESTRA VERSIÓN", r.nuestraVersion);
+  if (r.fuente && r.fuente.url) lines.push("", `Original: ${r.fuente.url}`);
+  return lines.join("\n");
+}
+function exportDocHTML(items, title){
+  const data = {formato:"recetario-v1", exportado:new Date().toISOString(), origen:"Recetario da Casa", recetas: items.map(x => exportable(x.r))};
+  const json = JSON.stringify(data).replace(/</g, "\\u003c");
+  const cards = items.map(({r, foto, pf}, idx) => {
+    const t = r.tiempos||{}; let last = null;
+    const ings = (r.ingredientes||[]).map(i => { let g = ""; if (i.grupo && i.grupo !== last) g = `<li class="g">${esc(i.grupo)}</li>`; last = i.grupo; const {qty,name} = ingLine(i, 1); return g + `<li><b>${esc(qty)}</b> ${esc(name)}</li>`; }).join("");
+    const avg = avgRating(r);
+    return `<article id="r${idx}">
+      ${foto ? `<img data-foto="${idx}" src="${foto}" alt="${esc(r.titulo)}">` : ""}
+      <p class="tag">${r.estado==="probada" ? `Probada en casa${avg?` · ${starsText(avg)}`:""}` : "Por probar"}${r.categoria?` · ${esc(CATS[r.categoria])}`:""}</p>
+      <h2>${esc(r.titulo)}</h2>${r.descripcion?`<p>${esc(r.descripcion)}</p>`:""}
+      <p class="meta">${r.raciones?`${fmtQty(r.raciones)} raciones · `:""}Prep. ${fmtMin(t.preparacion_min)} · Cocción ${fmtMin(t.coccion_min)}${t.reposo_min?` · Reposo ${fmtMin(t.reposo_min)}`:""}${r.dificultad?` · ${esc(r.dificultad)}`:""}${r.cocina?` · Cocina ${esc(r.cocina.toLowerCase())}`:""}${(r.utensilios||[]).length?` · ${esc(r.utensilios.join(", "))}`:""}</p>
+      <h3>Ingredientes</h3><ul>${ings}</ul>
+      <h3>Preparación</h3><ol>${(r.pasos||[]).map((p,j)=>`<li>${esc(p.texto)}${pf && pf[j] ? `<img class="pf" data-paso-foto="${idx}-${j}" src="${pf[j]}" alt="">` : ""}</li>`).join("")}</ol>
+      ${r.notas?`<h3>Notas</h3><p class="pre">${esc(r.notas)}</p>`:""}
+      ${r.nuestraVersion?`<h3>Nuestra versión</h3><p class="pre">${esc(r.nuestraVersion)}</p>`:""}
+      ${r.fuente&&r.fuente.url?`<p class="meta">Original: <a href="${esc(r.fuente.url)}">${esc(r.fuente.url)}</a></p>`:""}
+    </article>`;
+  }).join("");
+  const index = items.length > 1 ? `<nav><h3>Índice</h3><ol>${items.map(({r},i)=>`<li><a href="#r${i}">${esc(r.titulo)}</a></li>`).join("")}</ol></nav>` : "";
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(title)}</title>
+<style>
+:root{--bg:#f5f7fc;--card:#fff;--ink:#15203b;--ink2:#4b5675;--line:#d9dfec;--accent:#1c3fa8;color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1221;--card:#151c30;--ink:#e8ecf7;--ink2:#a6b0ca;--line:#29334f;--accent:#8ea8ff}}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:16px}
+main{max-width:680px;margin:0 auto}
+header h1{font-family:Georgia,serif;font-weight:400;color:var(--accent);margin:8px 0 2px}
+header p{color:var(--ink2);margin:0 0 16px}
+article,nav{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 16px}
+article img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px}
+article img.pf{aspect-ratio:auto;margin-top:8px;display:block}
+h2{font-family:Georgia,serif;font-weight:400;font-size:1.6rem;margin:6px 0}
+h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);margin:18px 0 6px}
+.tag{font-size:.82rem;font-weight:700;color:var(--accent);margin:10px 0 0}
+.meta{font-size:.9rem;color:var(--ink2);overflow-wrap:anywhere}
+ul{list-style:none;padding:0;margin:0}ul li{padding:6px 0;border-bottom:1px solid var(--line)}ul li.g{font-weight:700;color:var(--accent);border:0;padding-top:12px}
+ul li b{color:var(--accent)}ol{padding-left:22px}ol li{margin:0 0 10px}
+.pre{white-space:pre-wrap}a{color:var(--accent)}
+pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:.78rem;overflow-wrap:anywhere}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:10px 16px;background:var(--accent);color:var(--card)}
+</style></head><body><main>
+<header><h1>${esc(title)}</h1><p>${items.length} ${items.length===1?"receta":"recetas"} · Recetario da Casa · ${new Date().toLocaleDateString("es-ES")}</p></header>
+${index}${cards}
+<nav><h3>¿Me mandas tus recetas?</h3><p>Si usas ChatGPT, Gemini o Claude, copia este texto en la IA y después dicta o pega tu receta. Mándame el JSON que te devuelva y la añado a mi recetario.</p>
+<pre id="p">${esc(PROMPT_IA)}</pre><button onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('p').textContent).then(function(){this.textContent='Copiado'}.bind(this))">Copiar prompt</button></nav>
+</main>
+<script type="application/json" id="recetario-datos">${json}<\/script>
+</body></html>`;
+}
+async function saveFile(filename, data){
+  if (S.downloads){
+    try { await S.downloads.save({filename, data}); toast("Archivo listo"); return; }
+    catch(e){ if (e && e.code === "declined") return; if (e && !["unavailable","not_granted","capability_disabled","capability_removed"].includes(e.code)) { toast("No se pudo guardar el archivo"); return; } }
+  }
+  const isJSON = filename.endsWith(".json");
+  openSheet(`<h2>Copia el contenido</h2><p class="hint">Desde aquí no se puede descargar el archivo. Copia el ${isJSON ? "JSON" : "HTML"} y pégalo donde lo necesites.</p>
+    <textarea id="fb-text" rows="8" readonly style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface-2);font-size:.8rem">${esc(data)}</textarea>
+    <button class="btn primary block" id="fb-copy">Copiar</button>`, sh => { $("#fb-copy", sh).onclick = () => copyText(data, $("#fb-text", sh)); });
+}
+async function doExport(list, fmt, title){
+  if (!list.length){ toast("No hay recetas que exportar"); return; }
+  closeSheet(); toast("Preparando el archivo…");
+  const many = list.length > 1;
+  const items = [];
+  for (const r of list){
+    const foto = r.fotos && r.fotos[0] ? await assetToDataURL(r.fotos[0], many ? 700 : 1000, many ? .66 : .74) : null;
+    const pf = {};
+    if (list.length <= 10) for (const [j, ps] of (r.pasos||[]).entries()) if (ps.foto) pf[j] = await assetToDataURL(ps.foto, 700, .66);
+    items.push({r, foto, pf});
+  }
+  const base = slug(title);
+  if (fmt === "json"){
+    const data = {formato:"recetario-v1", exportado:new Date().toISOString(), origen:"Recetario da Casa", recetas: items.map(({r,foto,pf}) => { const e = exportable(r); e.pasos = e.pasos.map((ps,j) => pf[j] ? {...ps, foto_data: pf[j]} : ps); return {...e, foto_data: foto}; })};
+    await saveFile(base + ".json", JSON.stringify(data, null, 2));
+  } else {
+    await saveFile(base + ".html", exportDocHTML(items, title));
+  }
+}
+
+/* ---------- Menú semanal ---------- */
+const DIAS = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+const GRUPOS = {legumbre:"Legumbres", pescado:"Pescado", carne_blanca:"Carne blanca", carne_roja:"Carne roja", huevo:"Huevos", cereal:"Arroz y pasta", verdura:"Verduras", otro:"Otro"};
+const KW = [
+  ["pescado", /merluza|bacalao|salmon|atun|bonito|sardin|caballa|rape|lubina|dorada|gamba|langostin|mejillon|almeja|zamburi|vieira|calamar|pulpo|sepia|chipir|pescad|marisco|berberecho|navaja|rodaballo|jurel|xouba|anchoa|boqueron|trucha|lenguado|abadejo|congrio|caldeirada/],
+  ["legumbre", /garbanzo|lenteja|alubia|judia (blanca|pinta|roja)|fabes|faba|habas|soja|hummus|cocido/],
+  ["carne_roja", /ternera|cerdo|cordero|buey|chorizo|lomo|costilla|carne picada|jamon|panceta|cabrito|raxo|zorza|lacon|chuleta|solomillo|hamburguesa|salchicha|morcilla|carrillera|rabo/],
+  ["carne_blanca", /pollo|pavo|conejo|pechuga|muslo/],
+  ["huevo", /tortilla|huevo|revuelto|frittata|quiche/],
+  ["cereal", /arroz|risotto|paella|pasta|macarr|espagueti|spaghetti|fideo|fideua|lasana|quinoa|cuscus|noqui|canelon|pizza/]
+];
+function grupoDe(r, def){
+  const t = deacc((r.titulo||"").toLowerCase());
+  for (const [g, re] of KW) if (re.test(t)) return g;
+  const ing = deacc((r.ingredientes||[]).map(i=>i.nombre).join(" ").toLowerCase());
+  for (const [g, re] of KW) if (g !== "huevo" && re.test(ing)) return g;
+  return def || "verdura";
+}
+function isoLocal(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function addDays(iso, n){ const d = new Date(iso+"T12:00:00"); d.setDate(d.getDate()+n); return isoLocal(d); }
+function nextMonday(){ const d = new Date(); d.setHours(12,0,0,0); const wd = (d.getDay()+6)%7; if (wd) d.setDate(d.getDate()+7-wd); return isoLocal(d); }
+function fmtDay(iso){ try { return new Date(iso+"T12:00:00").toLocaleDateString("es-ES",{day:"numeric",month:"long"}); } catch(e){ return iso; } }
+const BATCH_DIAS = [[-1,"Domingo antes de empezar"],[-2,"Sábado antes de empezar"],[0,"Lunes"],[2,"Miércoles"],[3,"Jueves"]];
+const LIBRE = () => ({tipo:"libre", receta_id:null, titulo:"Libre", grupo:null, batch:false, nota:""});
+const MEALS = ["comida","cena"];
+function defaultCfg(){ return {inicio: nextMonday(), personas: 4, slots: DIAS.map(()=>({comida:4, cena:4})), nuevas: 1, batch: true, batchDia: -1, batchHoras: 2, preferencias: "", ideas: true, nevera: "", congelador: ""}; }
+function normSlots(slots, per){
+  if (!Array.isArray(slots) || slots.length !== 7) return DIAS.map(() => ({comida: per, cena: per}));
+  const v = x => x === true ? per : x === false || x == null ? 0 : Math.max(0, Math.min(30, parseInt(x, 10) || 0));
+  return slots.map(s => ({comida: v(s && s.comida), cena: v(s && s.cena)}));
+}
+function batchLabel(cfg){
+  cfg = cfg || defaultCfg();
+  const d = addDays(cfg.inicio, cfg.batchDia ?? -1);
+  const t = new Date(d+"T12:00:00").toLocaleDateString("es-ES",{weekday:"long", day:"numeric", month:"long"});
+  return t.charAt(0).toUpperCase()+t.slice(1);
+}
+function menuCands(){ return S.recetas.filter(r => !["postre","salsa","bebida"].includes(r.categoria)); }
+let menuQ = Promise.resolve();
+function menuPatch(patch){
+  menuQ = menuQ.then(() => S.db.doc("menus/actual").update(JSON.parse(JSON.stringify(patch)))).catch(e => toast(dbErr(e)));
+  return menuQ;
+}
+
+/* Nevera y congelador */
+const STOP = new Set(["del","las","los","con","para","sin","fresco","fresca","frescos","frescas","picado","picada","entero","entera","grande","grandes","pequeno","pequena","medio","media","natural","virgen","extra","taper","tapers","tupper","tuppers","racion","raciones","bolsa","bolsas","paquete","trozo","trozos","casero","casera","congelado","congelada","congelados","congeladas"]);
+function sing(w){ return w.length > 4 && w.endsWith("es") ? w.slice(0,-2) : w.length > 3 && w.endsWith("s") ? w.slice(0,-1) : w; }
+function words(t){ return deacc(String(t||"").toLowerCase()).split(/[^a-z0-9]+/).filter(w => w.length > 2 && !STOP.has(w) && !/^\d/.test(w)).map(sing); }
+function wordSet(t){ return new Set(words(t)); }
+function inSet(name, set){ const w = words(name); return w.length > 0 && w.every(x => set.has(x)); }
+function freezerDishes(cfg, cands){
+  const out = [];
+  String(cfg.congelador||"").split(/[\n,;]+/).map(x => x.trim()).filter(Boolean).forEach(line => {
+    const lw = wordSet(line);
+    const rec = cands.find(r => inSet(r.titulo, lw));
+    const isDish = rec || /t[aá]per|tupper|raci[oó]n|plato|hech[oa]s?\b|cocinad[oa]s?\b|guiso|croqueta|alb[oó]ndiga|lasa[nñ]a|canel[oó]n|empanada|cocido|potaje/i.test(line);
+    if (!isDish) return;
+    const m = line.match(/^\s*(\d+)/);
+    const n = Math.min(3, m ? parseInt(m[1], 10) : 1);
+    let t = line.replace(/^\s*\d+\s*/, "").replace(/^(t[aá]pers?|tuppers?|raci[oó]n(es)?|bolsas?)\s+(de\s+)?/i, "").trim();
+    t = t.charAt(0).toUpperCase() + t.slice(1);
+    for (let k = 0; k < n; k++) out.push({titulo: rec ? rec.titulo : t, receta_id: rec ? rec.id : null, grupo: rec ? grupoDe(rec) : grupoDe({titulo: t, ingredientes: []}, "otro")});
+  });
+  return out;
+}
+
+/* Preparar menú */
+function slotGridHTML(cfg){
+  const opts = v => Array.from({length: 16}, (_, n) => `<option value="${n}"${v === n ? " selected" : ""}>${n ? n + " pers." : "Fuera"}</option>`).join("") + (v > 15 ? `<option value="${v}" selected>${v} pers.</option>` : "");
+  return `<span></span><span class="lbl">Comida</span><span class="lbl">Cena</span>` + DIAS.map((d, i) => `<span class="dname">${d}</span>`
+    + MEALS.map(m => `<select class="tg${cfg.slots[i][m] ? "" : " off"}" id="msl-${i}-${m}" data-slot="${i}-${m}" aria-label="Personas el ${d.toLowerCase()} en la ${m}">${opts(cfg.slots[i][m])}</select>`).join("")).join("");
+}
+function menuSetupSheet(){
+  const prev = S.menu && S.menu.config;
+  const cfg = {...defaultCfg(), ...(prev || {})};
+  if (!prev || addDays(prev.inicio, 6) < isoLocal(new Date())) cfg.inicio = nextMonday();
+  cfg.slots = normSlots(cfg.slots, cfg.personas);
+  S.mcfg = cfg;
+  const n = menuCands().length;
+  openSheet(`<h2>Preparar menú semanal</h2>
+    <p class="hint">${n} ${n===1?"receta de plato disponible":"recetas de platos disponibles"} (no cuentan postres, salsas ni bebidas).${n < 8 ? (cfg.ideas ? " Con pocas recetas, los huecos se completan con ideas sencillas." : " Con pocas recetas quedarán huecos libres.") : ""}</p>
+    <div class="grid2">
+      <div class="field"><label class="lbl" for="m-inicio">Semana que empieza el</label><input id="m-inicio" type="date" value="${cfg.inicio}"></div>
+      <div class="field"><label class="lbl" for="m-pers">Personas habituales</label><input id="m-pers" type="number" min="1" max="30" inputmode="numeric" value="${cfg.personas}"></div>
+    </div>
+    <div class="field"><span class="lbl">¿Cuántos sois en cada comida?</span>
+      <p class="hint">Cambia el número si algún día sois más o menos. "Fuera" quiere decir que no coméis en casa.</p>
+      <div class="slotgrid" id="m-slots">${slotGridHTML(cfg)}</div>
+      <div class="chips" style="flex-wrap:wrap;margin-top:8px"><button type="button" class="chip" data-act="mPreset" data-p="todo">Todo</button><button type="button" class="chip" data-act="mPreset" data-p="cenas">Solo cenas</button><button type="button" class="chip" data-act="mPreset" data-p="finde">Cenas y fin de semana entero</button></div></div>
+    <div class="field"><label class="lbl" for="m-nevera">En la nevera, para gastar</label><textarea id="m-nevera" rows="2" placeholder="Medio pollo asado, 2 calabacines, nata abierta, 6 huevos…">${esc(cfg.nevera||"")}</textarea></div>
+    <div class="field"><label class="lbl" for="m-cong">En el congelador</label><textarea id="m-cong" rows="2" placeholder="2 tápers de lentejas, caldo casero, lomos de merluza, guisantes…">${esc(cfg.congelador||"")}</textarea>
+      <span class="hint">Los platos ya hechos se usan como comidas; los ingredientes, en las recetas y no salen en la lista de la compra.</span></div>
+    <div class="field"><label class="lbl" for="m-nuevas">Recetas nuevas a probar</label><select id="m-nuevas">${[0,1,2,3].map(x => `<option value="${x}"${cfg.nuevas===x?" selected":""}>${x===0?"Ninguna":x}</option>`).join("")}</select></div>
+    <label class="check" for="m-batch"><input type="checkbox" id="m-batch"${cfg.batch?" checked":""}>Hacer batch cooking</label>
+    <div class="grid2" id="m-batchopts"${cfg.batch?"":" hidden"}>
+      <div class="field"><label class="lbl" for="m-bdia">Día de cocinar</label><select id="m-bdia">${BATCH_DIAS.map(([v,l]) => `<option value="${v}"${cfg.batchDia===v?" selected":""}>${l}</option>`).join("")}</select></div>
+      <div class="field"><label class="lbl" for="m-bhoras">Tiempo disponible</label><select id="m-bhoras">${[1,2,3,4].map(h => `<option value="${h}"${cfg.batchHoras===h?" selected":""}>${h} h</option>`).join("")}</select></div>
+    </div>
+    <div class="field"><label class="lbl" for="m-pref">Preferencias (opcional)</label><textarea id="m-pref" rows="2" placeholder="Cenas ligeras, nada picante para los niños, el martes poco tiempo…">${esc(cfg.preferencias||"")}</textarea></div>
+    <label class="check" for="m-ideas"><input type="checkbox" id="m-ideas"${cfg.ideas?" checked":""}>Si faltan recetas, completar con ideas sencillas</label>
+    <div id="m-status"></div>
+    <button class="btn primary block" id="m-go">${S.sample ? "Generar menú con IA" : "Generar menú"}</button>`,
+  sh => {
+    $("#m-batch", sh).onchange = e => { $("#m-batchopts", sh).hidden = !e.target.checked; };
+    $("#m-pers", sh).onchange = e => {
+      const nv = Math.max(1, Math.min(30, parseInt(e.target.value, 10) || 4)), old = S.mcfg.personas;
+      S.mcfg.slots.forEach(sl => MEALS.forEach(m => { if (sl[m] && sl[m] === old) sl[m] = nv; }));
+      S.mcfg.personas = nv; $("#m-slots", sh).innerHTML = slotGridHTML(S.mcfg);
+    };
+    $("#m-go", sh).onclick = () => generateMenu(sh);
+  });
+}
+function menuPrompt(cfg, cands){
+  const huecos = DIAS.map((d,i) => ({fecha: addDays(cfg.inicio,i), dia: d, comida: cfg.slots[i].comida, cena: cfg.slots[i].cena}));
+  const cat = cands.slice(0, 400).map(r => ({id: r.id, titulo: r.titulo, categoria: r.categoria, estado: r.estado, nota: avgRating(r) ? Math.round(avgRating(r)*10)/10 : null, minutos: totalMin(r) || null, raciones: r.raciones, grupo_estimado: grupoDe(r), cocina: r.cocina || null, utensilios: r.utensilios || [], ingredientes: (r.ingredientes||[]).slice(0,14).map(i => i.nombre), etiquetas: r.etiquetas || []}));
+  return `Eres un planificador de menús familiares en España. Prepara el menú de una semana con las recetas del recetario de la familia.
+
+DATOS
+- Huecos de la semana, con cuántas personas comen en cada uno (0 = no comen en casa): ${JSON.stringify(huecos)}
+- En la nevera, para gastar pronto: ${cfg.nevera || "nada indicado"}
+- En el congelador: ${cfg.congelador || "nada indicado"}
+- Recetas nuevas ("por_probar") a incluir: ${cfg.nuevas}
+- Batch cooking: ${cfg.batch ? `sí, el ${batchLabel(cfg)} (${cfg.batchDia < 0 ? "antes de empezar la semana" : "durante la semana"}), con unas ${cfg.batchHoras} h disponibles` : "no"}
+- Preferencias de la familia: ${cfg.preferencias || "ninguna"}
+- Ideas fuera del recetario: ${cfg.ideas ? "permitidas solo cuando falten recetas adecuadas" : "no permitidas; si faltan recetas, usa \"libre\""}
+
+RECETARIO (JSON):
+${JSON.stringify(cat)}
+
+CRITERIOS
+- Gasta primero lo de la nevera, en los primeros días de la semana, eligiendo recetas que lo usen.
+- Los platos ya cocinados del congelador son comidas hechas: ponlos en algún hueco con tipo "congelado" (receta_id si es una receta del recetario; si no, null) y nota "Sacar del congelador la noche antes". Cada táper o ración indicada da para un hueco.
+- Los ingredientes congelados (pescado, verduras, caldo…) están disponibles: aprovéchalos en las recetas.
+- Equilibrio semanal según la AESAN: legumbres al menos 4 veces, pescado al menos 3 (mejor si alguno es azul), carne como máximo 3 (mejor aves o conejo), huevos hasta 4, y verdura u hortaliza a diario (como plato o acompañamiento).
+- Comidas más contundentes (legumbres, arroces, guisos); cenas más ligeras (verdura, pescado, huevo, cremas).
+- No repitas una receta salvo como sobras planificadas, como mucho 2 días después de cocinarla.
+- Prioriza las recetas probadas con buena nota e incluye las recetas nuevas pedidas si las hay.
+- Si hay batch cooking: elige para esa sesión platos que aguanten bien (guisos, legumbres, cremas, salsas, bases, verduras asadas) para los 3-4 días siguientes; lo que se coma más tarde, indica que se congele. Marca con "batch": true los platos que salen de esa sesión. En los pasos indica cuántas raciones hacer de cada plato, sumando las personas de todos los huecos que cubre. Aprovecha fuegos y horno en paralelo y ajústate al tiempo disponible.
+- Respeta lo que pidan las preferencias sobre tipos de cocina o aparatos (por ejemplo, barbacoa el fin de semana, un día de cocina japonesa o usar la olla lenta en días de mucho trabajo).
+- "grupo" según el ingrediente principal del plato.
+
+Responde SOLO con JSON con esta forma:
+{
+ "dias": [{"fecha": "YYYY-MM-DD",
+   "comida": {"tipo": "receta | sobras | congelado | idea | libre", "receta_id": "id del recetario o null", "titulo": "nombre del plato", "grupo": "legumbre | pescado | carne_blanca | carne_roja | huevo | cereal | verdura | otro", "batch": false, "nota": "acompañamiento o consejo breve, o vacío"},
+   "cena": { la misma forma }}],
+ "batch": {"tiempo_total_min": 120, "pasos": [{"texto": "qué hacer, en orden", "minutos": 20, "receta_ids": ["id"]}], "conservacion": ["consejo breve"]},
+ "ideas_ingredientes": [{"nombre": "", "cantidad": null, "unidad": ""}],
+ "equilibrio": "2 o 3 frases sobre cómo queda la semana, qué se aprovecha de la nevera y el congelador, y qué conviene vigilar"
+}
+- Incluye los 7 días; pon null en los huecos con 0 personas.
+- En "sobras", receta_id es la receta cocinada antes.
+- En "idea", receta_id es null: un plato sencillo fuera del recetario; pon sus ingredientes en "ideas_ingredientes" para las personas de ese hueco, sin incluir lo que ya hay en la nevera o el congelador.
+- Si no hay batch cooking, "batch": null.`;
+}
+function cleanSlot(x, n){
+  if (!x || typeof x !== "object") return null;
+  let tipo = ["receta","sobras","congelado","idea","libre"].includes(x.tipo) ? x.tipo : "idea";
+  let id = str(x.receta_id) || null;
+  const r = id ? getR(id) : null;
+  if ((tipo === "receta" || tipo === "sobras") && !r){ tipo = str(x.titulo) ? "idea" : "libre"; }
+  if (!r || tipo === "idea" || tipo === "libre") id = null;
+  if (tipo === "libre") return {...LIBRE(), titulo: str(x.titulo) || "Libre", nota: str(x.nota), personas: n};
+  const grupo = GRUPOS[x.grupo] ? x.grupo : (r ? grupoDe(r) : "otro");
+  return {tipo, receta_id: id, titulo: r && tipo !== "congelado" ? r.titulo : (str(x.titulo) || (r ? r.titulo : "")), grupo, batch: tipo === "congelado" ? false : !!x.batch, nota: str(x.nota), personas: n};
+}
+function cleanPlan(p, cfg){
+  p = p && typeof p === "object" ? p : {};
+  const src = Array.isArray(p.dias) ? p.dias : [];
+  const dias = DIAS.map((_, i) => {
+    const fecha = addDays(cfg.inicio, i);
+    const d = src.find(x => x && x.fecha === fecha) || src[i] || {};
+    const o = {fecha};
+    MEALS.forEach(m => { const n = cfg.slots[i][m]; o[m] = n ? (cleanSlot(d[m], n) || {...LIBRE(), personas: n}) : null; });
+    return o;
+  });
+  if (!dias.some(d => MEALS.some(m => d[m] && d[m].tipo !== "libre"))) throw {code: "invalid_json"};
+  const pb = p.batch;
+  const batch = cfg.batch && pb && typeof pb === "object" ? {
+    tiempo_total_min: num(pb.tiempo_total_min),
+    pasos: (Array.isArray(pb.pasos) ? pb.pasos : []).map(x => ({texto: str(x && x.texto), minutos: num(x && x.minutos), receta_ids: (Array.isArray(x && x.receta_ids) ? x.receta_ids : []).map(str).filter(id => getR(id))})).filter(x => x.texto),
+    conservacion: (Array.isArray(pb.conservacion) ? pb.conservacion : []).map(str).filter(Boolean)
+  } : null;
+  const ideas = (Array.isArray(p.ideas_ingredientes) ? p.ideas_ingredientes : []).map(i => ({nombre: str(i && i.nombre), cantidad: num(i && i.cantidad), unidad: str(i && i.unidad)})).filter(i => i.nombre);
+  return {inicio: cfg.inicio, dias, batch: batch && batch.pasos.length ? batch : null, ideas_ingredientes: ideas, equilibrio: str(p.equilibrio), generadoCon: "claude"};
+}
+function localPlan(cfg, cands){
+  const counts = {legumbre:0, pescado:0, carne_blanca:0, carne_roja:0, huevo:0, cereal:0, verdura:0, otro:0};
+  const used = {}, batchServ = {};
+  let nuevas = cfg.nuevas, prevG = null;
+  const fridge = wordSet(cfg.nevera);
+  const info = cands.map(r => ({r, g: grupoDe(r), min: totalMin(r), nota: avgRating(r), usaNevera: (r.ingredientes||[]).some(i => inSet(i.nombre, fridge))}));
+  const dias = DIAS.map((_, i) => ({fecha: addDays(cfg.inicio, i), comida: null, cena: null}));
+  // Platos del congelador: a mitad de semana, cuando se acaba lo del batch
+  const order = [];
+  [3,4,2,5,1,6,0].forEach(i => order.push([i,"cena"]));
+  [3,4,2,5,1,6,0].forEach(i => order.push([i,"comida"]));
+  const free = order.filter(([i,m]) => cfg.slots[i][m]);
+  freezerDishes(cfg, cands).forEach(fd => {
+    const slot = free.shift(); if (!slot) return;
+    const [i, m] = slot;
+    dias[i][m] = {tipo: "congelado", receta_id: fd.receta_id, titulo: fd.titulo, grupo: fd.grupo, batch: false, nota: "Sacar del congelador la noche antes", personas: cfg.slots[i][m]};
+  });
+  dias.forEach((out, i) => {
+    for (const m of MEALS){
+      const n = cfg.slots[i][m];
+      if (!n){ out[m] = null; continue; }
+      if (out[m]){ counts[out[m].grupo] = (counts[out[m].grupo] || 0) + 1; prevG = out[m].grupo; continue; }
+      let best = null, bs = -Infinity;
+      for (const c of info){
+        const nuevo = c.r.estado !== "probada";
+        const carne = counts.carne_blanca + counts.carne_roja;
+        let sc = nuevo ? (nuevas > 0 ? 2.6 : -6) : 2 + (c.nota || 3) / 2;
+        sc -= (used[c.r.id] || 0) * 6;
+        if (c.usaNevera) sc += i <= 2 ? 1.5 : 0.5;
+        if (c.g === "legumbre") sc += counts.legumbre < 4 ? 2 : -1;
+        if (c.g === "pescado") sc += counts.pescado < 3 ? 2 : -0.5;
+        if (c.g === "carne_roja" || c.g === "carne_blanca") sc += carne >= 3 ? -5 : (c.g === "carne_roja" ? -0.5 : 0.3);
+        if (c.g === "huevo" && counts.huevo >= 4) sc -= 5;
+        if (m === "cena"){ if (["verdura","pescado","huevo"].includes(c.g)) sc += 1; if (c.min > 60) sc -= 1.5; if (c.g === "legumbre") sc -= 1; }
+        else if (c.g === "legumbre" || c.g === "cereal") sc += 0.8;
+        if (c.g === prevG) sc -= 1.5;
+        sc += Math.random() * 0.8;
+        if (sc > bs){ bs = sc; best = c; }
+      }
+      if (!best || bs < -1){ out[m] = {...LIBRE(), nota: "Faltan recetas: añade más al recetario", personas: n}; prevG = null; continue; }
+      used[best.r.id] = (used[best.r.id] || 0) + 1;
+      if (best.r.estado !== "probada") nuevas--;
+      counts[best.g]++; prevG = best.g;
+      const b = cfg.batchDia;
+      const isBatch = cfg.batch && i >= Math.max(0, b) && i - b <= 3 && (best.min >= 25 || best.g === "legumbre") && !["pescado","huevo"].includes(best.g);
+      if (isBatch) batchServ[best.r.id] = (batchServ[best.r.id] || 0) + n;
+      out[m] = {tipo: "receta", receta_id: best.r.id, titulo: best.r.titulo, grupo: best.g, batch: isBatch, nota: best.r.estado !== "probada" ? "Receta nueva: después marcadla como probada" : (best.usaNevera && i <= 2 ? "Aprovecha lo que hay en la nevera" : ""), personas: n};
+    }
+  });
+  let batch = null;
+  const bIds = Object.keys(batchServ);
+  if (cfg.batch && bIds.length){
+    batch = {tiempo_total_min: null,
+      pasos: [{texto: "Empieza por lo que más tarda (legumbres, guisos, horno) y, mientras, lava y corta las verduras de toda la tanda.", minutos: null, receta_ids: []}]
+        .concat(bIds.map(id => { const r = getR(id); return {texto: `Prepara ${r.titulo}: ${batchServ[id]} raciones. Repártelo en tápers con el día escrito.`, minutos: totalMin(r) || null, receta_ids: [id]}; })),
+      conservacion: ["Enfría rápido y guarda en la nevera en menos de 2 horas.", "En nevera, bien tapado, hasta 3-4 días.", "Lo que vayáis a comer más tarde, congélalo y pásalo a la nevera la noche anterior."]};
+  }
+  const carne = counts.carne_blanca + counts.carne_roja, falta = [], sobra = [];
+  if (counts.legumbre < 4) falta.push("legumbres");
+  if (counts.pescado < 3) falta.push("pescado");
+  if (carne > 3) sobra.push("carne");
+  if (counts.huevo > 4) sobra.push("huevo");
+  const equilibrio = falta.length || sobra.length
+    ? `${falta.length ? `Queda por debajo en ${falta.join(" y ")}. ` : ""}${sobra.length ? `Hay más ${sobra.join(" y ")} de lo aconsejado. ` : ""}${falta.length ? `Añadir recetas de ${falta.join(" y ")} al recetario ayudará a equilibrar la semana.` : ""}`
+    : "La semana cumple las orientaciones de legumbres, pescado, carne y huevos.";
+  return {inicio: cfg.inicio, dias, batch, ideas_ingredientes: [], equilibrio, generadoCon: "local"};
+}
+async function saveMenu(plan, cfg, st, btn){
+  try {
+    await S.db.doc("menus/actual").set(JSON.parse(JSON.stringify({...plan, config: cfg, compra: {}, batchHecho: {}, creadoEn: new Date().toISOString(), creadoPor: S.uid || null})));
+    closeSheet(); toast("Menú listo"); go("menu");
+  } catch(e){ if (btn) btn.disabled = false; if (st) st.innerHTML = `<p class="err">${esc(dbErr(e))}</p>`; }
+}
+async function generateMenu(sh){
+  const cfg = S.mcfg;
+  cfg.inicio = $("#m-inicio", sh).value || nextMonday();
+  cfg.personas = Math.max(1, Math.min(30, parseInt($("#m-pers", sh).value, 10) || 4));
+  $$("[data-slot]", sh).forEach(el => { const [i, m] = el.dataset.slot.split("-"); cfg.slots[+i][m] = +el.value; });
+  cfg.nevera = $("#m-nevera", sh).value.trim();
+  cfg.congelador = $("#m-cong", sh).value.trim();
+  cfg.nuevas = +$("#m-nuevas", sh).value;
+  cfg.batch = $("#m-batch", sh).checked;
+  cfg.batchDia = +$("#m-bdia", sh).value;
+  cfg.batchHoras = +$("#m-bhoras", sh).value;
+  cfg.preferencias = $("#m-pref", sh).value.trim();
+  cfg.ideas = $("#m-ideas", sh).checked;
+  const st = $("#m-status", sh), btn = $("#m-go", sh);
+  if (!cfg.slots.some(x => x.comida || x.cena)){ st.innerHTML = `<p class="err">Pon personas en al menos una comida o cena.</p>`; return; }
+  const cands = menuCands();
+  if (!cands.length && !(S.sample && cfg.ideas) && !freezerDishes(cfg, cands).length){ st.innerHTML = `<p class="err">No hay recetas de platos que repartir. Añade alguna al recetario.</p>`; return; }
+  btn.disabled = true;
+  if (!S.sample) return saveMenu(localPlan(cfg, cands), cfg, st, btn);
+  const ctl = new AbortController(); S.aiCtl = ctl;
+  st.innerHTML = `<div class="status"><span class="spin"></span><span>La IA está preparando el menú…</span><span style="flex:1"></span><button class="textbtn" id="m-stop">Parar</button></div>`;
+  $("#m-stop", sh).onclick = () => ctl.abort();
+  let plan;
+  try { plan = cleanPlan(await S.sample.json(menuPrompt(cfg, cands), {signal: ctl.signal, cache: false}), cfg); }
+  catch(e){
+    S.aiCtl = null; btn.disabled = false;
+    const c = e && e.code;
+    if (c === "cancelled"){ st.innerHTML = ""; return; }
+    const msg = c === "rate_limited" ? "Has llegado al límite de uso de la IA por ahora."
+      : ["not_granted","sampling_disabled","capability_disabled","capability_removed","not_declared"].includes(c) ? "Configura una IA en Ajustes."
+      : aiErrMsg(e);
+    st.innerHTML = `<p class="err">${esc(msg)}</p><button class="btn" id="m-local" style="margin-top:8px">Repartir sin IA</button>`;
+    $("#m-local", sh).onclick = e2 => { e2.target.disabled = true; saveMenu(localPlan(cfg, cands), cfg, st, btn); };
+    return;
+  }
+  S.aiCtl = null;
+  await saveMenu(plan, cfg, st, btn);
+}
+
+/* Ver menú */
+function slotPers(menu, s){ return (s && s.personas) || (menu.config && menu.config.personas) || 4; }
+function menuCounts(menu){
+  const c = {legumbre:0, pescado:0, carne_blanca:0, carne_roja:0, huevo:0, cereal:0, verdura:0, otro:0};
+  (menu.dias||[]).forEach(d => MEALS.forEach(m => { const x = d && d[m]; if (x && x.grupo && c[x.grupo] != null) c[x.grupo]++; }));
+  return c;
+}
+function balanceHTML(menu){
+  const c = menuCounts(menu), carne = c.carne_blanca + c.carne_roja;
+  const items = [
+    ["Legumbres", c.legumbre, "al menos 4", c.legumbre >= 4],
+    ["Pescado", c.pescado, "al menos 3", c.pescado >= 3],
+    ["Carne", carne, `máx. 3${c.carne_roja ? ` · ${c.carne_roja} roja` : ""}`, carne <= 3],
+    ["Huevos", c.huevo, "hasta 4", c.huevo <= 4]
+  ];
+  return `<div class="bal">${items.map(([l,n,t,ok]) => `<div class="b ${ok?"ok":"wait"}"><b>${n}</b><span>${l}</span><small>${t}</small></div>`).join("")}</div>`;
+}
+function slotHTML(menu, d, i, m){
+  const x = d[m];
+  let body;
+  if (!x) body = `<span class="muted small">No coméis en casa</span>`;
+  else {
+    const r = x.receta_id ? getR(x.receta_id) : null;
+    const pills = [];
+    if (x.tipo === "sobras") pills.push(`<span class="pill left">Sobras</span>`);
+    if (x.tipo === "congelado") pills.push(`<span class="pill batch">Del congelador</span>`);
+    if (x.tipo === "idea") pills.push(`<span class="pill idea">Idea</span>`);
+    if (x.batch) pills.push(`<span class="pill batch">Batch</span>`);
+    if (r && x.tipo === "receta" && r.estado !== "probada") pills.push(`<span class="pill wait">Nueva</span>`);
+    if (x.grupo && x.grupo !== "otro" && GRUPOS[x.grupo]) pills.push(`<span class="gtag">${GRUPOS[x.grupo]}</span>`);
+    const title = x.tipo === "libre" ? `<span class="muted">${esc(x.titulo || "Libre")}</span>`
+      : r && x.tipo !== "congelado" ? `<button class="dishbtn" data-act="mOpen" data-id="${r.id}">${esc(r.titulo)}</button>`
+      : `<span class="dishname">${esc(x.titulo)}</span>`;
+    body = `${title}${pills.length ? `<div class="pills">${pills.join("")}</div>` : ""}${x.nota ? `<p class="small muted" style="margin:3px 0 0">${esc(x.nota)}</p>` : ""}`;
+  }
+  return `<div class="slot"><span class="lbl">${m === "comida" ? "Comida" : "Cena"}${x ? `<span class="pp">${slotPers(menu, x)} pers.</span>` : ""}</span><div class="dish">${body}</div>${S.canWrite ? `<button class="iconbtn sm" data-act="mEdit" data-d="${i}" data-m="${m}" aria-label="Cambiar ${m} del ${DIAS[i].toLowerCase()}">${ICON.edit}</button>` : ""}</div>`;
+}
+function batchHTML(menu){
+  const b = menu.batch;
+  if (!b || !(b.pasos||[]).length) return "";
+  const sum = b.pasos.reduce((a,x) => a + (x.minutos || 0), 0);
+  const hecho = menu.batchHecho || {};
+  return `<section class="panel"><div class="phead"><h2>Batch cooking</h2><span class="pill batch">${esc(batchLabel(menu.config))}</span></div>
+    ${b.tiempo_total_min ? `<p class="small muted" style="margin:0 0 4px">Unos ${fmtMin(b.tiempo_total_min)} en total.</p>` : sum ? `<p class="small muted" style="margin:0 0 4px">${fmtMin(sum)} sumando las recetas; menos si cocinas varias a la vez.</p>` : ""}
+    <ul class="ings">${b.pasos.map((x,i) => `<li class="ing${hecho[i] ? " done" : ""}"><input type="checkbox" id="bs-${i}" data-act="mBatchStep" data-i="${i}"${hecho[i] ? " checked" : ""}><span class="q">${x.minutos ? fmtMin(x.minutos) : ""}</span><span class="n"><label for="bs-${i}">${esc(x.texto)}</label>${(x.receta_ids||[]).map(getR).filter(Boolean).map(r => ` <button class="linkbtn" data-act="mOpen" data-id="${r.id}">ver receta</button>`).join("")}</span></li>`).join("")}</ul>
+    ${(b.conservacion||[]).length ? `<p class="lbl" style="margin:12px 0 4px">Conservación</p><ul class="plain">${b.conservacion.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+  </section>`;
+}
+function shopping(menu){
+  const cfg = menu.config || {};
+  const pantry = wordSet((cfg.nevera||"") + " " + (cfg.congelador||""));
+  const map = new Map();
+  const add = (nombre, q, u, from) => {
+    let ul = (u||"").trim().toLowerCase();
+    if (ul === "kg"){ if (q != null) q *= 1000; ul = "g"; }
+    if (ul === "l"){ if (q != null) q *= 1000; ul = "ml"; }
+    const key = slug(nombre + " " + ul);
+    const it = map.get(key) || {key, nombre, unidad: ul, q: 0, hasQ: false, de: new Set()};
+    if (q != null){ it.q += q; it.hasQ = true; }
+    if (from) it.de.add(from);
+    map.set(key, it);
+  };
+  (menu.dias||[]).forEach(d => MEALS.forEach(m => {
+    const x = d && d[m]; if (!x || !x.receta_id || x.tipo === "congelado") return;
+    const r = getR(x.receta_id); if (!r) return;
+    const f = r.raciones ? slotPers(menu, x) / r.raciones : 1;
+    (r.ingredientes||[]).forEach(i => add(i.nombre, i.cantidad != null ? i.cantidad * f : null, i.unidad, r.id));
+  }));
+  const all = [...map.values()].sort((a,b) => a.nombre.localeCompare(b.nombre, "es"));
+  const ideas = (menu.ideas_ingredientes||[]).map(i => ({key: "idea-" + slug(i.nombre + " " + (i.unidad||"")), nombre: i.nombre, unidad: (i.unidad||"").toLowerCase(), q: i.cantidad, hasQ: i.cantidad != null, de: new Set()}));
+  const enCasa = all.filter(it => inSet(it.nombre, pantry));
+  const items = all.filter(it => !enCasa.includes(it));
+  return {items, ideas, enCasa};
+}
+function qtyOf(it){
+  if (!it.hasQ) return it.unidad === "al gusto" ? "al gusto" : "";
+  let q = it.q, u = it.unidad;
+  if (u === "g" && q >= 1000){ q /= 1000; u = "kg"; }
+  if (u === "ml" && q >= 1000){ q /= 1000; u = "l"; }
+  return ingLine({cantidad: q, unidad: u, nombre: "", nota: ""}, 1).qty;
+}
+function shopHTML(menu){
+  const {items, ideas, enCasa} = shopping(menu);
+  if (!items.length && !ideas.length && !enCasa.length) return "";
+  const done = menu.compra || {};
+  const row = it => `<li class="ing${done[it.key] ? " done" : ""}"><input type="checkbox" id="sh-${it.key}" data-act="mShop" data-k="${it.key}"${done[it.key] ? " checked" : ""}><span class="q">${esc(qtyOf(it))}</span><label class="n" for="sh-${it.key}">${esc(it.nombre)}${it.de.size > 1 ? ` <span class="small muted">· ${it.de.size} platos</span>` : ""}</label></li>`;
+  return `<section class="panel"><div class="phead"><h2>Lista de la compra</h2><button class="textbtn" data-act="mCopyShop">Copiar</button></div>
+    <p class="small muted" style="margin:0 0 4px">Con las personas de cada comida. Lo que marquéis se ve marcado en todos los móviles.</p>
+    <ul class="ings">${items.map(row).join("")}${ideas.length ? `<li class="grp">Para las ideas</li>${ideas.map(row).join("")}` : ""}${enCasa.length ? `<li class="grp">Puede que ya lo tengáis</li><li class="small muted" style="padding:0 0 4px">Está en la nevera o el congelador; comprueba que llega.</li>${enCasa.map(row).join("")}` : ""}</ul></section>`;
+}
+function menuHTML(){
+  const head = `<header class="top"><button class="textbtn" data-act="back">${ICON.back.replace("<svg","<svg width='20' height='20'")}Recetas</button><span style="flex:1"></span>${S.menu ? `<button class="iconbtn" data-act="menuMenu" aria-label="Opciones del menú">${ICON.dots}</button>` : ""}</header>`;
+  if (S.noDb) return head + `<div class="empty"><h2>Abre el recetario en Claude</h2><p class="muted">El menú se guarda junto a las recetas. Abre este enlace desde Claude con la sesión iniciada.</p></div>`;
+  if (!S.menuLoaded) return head + `<div class="status"><span class="spin"></span>Abriendo el menú…</div>`;
+  if (!S.menu) return head + `<div class="dhead"><h1>Menú semanal</h1></div>
+    <div class="empty"><h2>Planifica la semana</h2>
+      <p class="muted">Indica cuántos coméis en cada comida y cena, y qué tenéis en la nevera y el congelador. El recetario reparte vuestras recetas buscando el equilibrio entre legumbres, pescado, carne y huevos, organiza el batch cooking si queréis y saca la lista de la compra.</p>
+      ${S.canWrite ? `<button class="btn primary" data-act="mSetup">Preparar menú</button>` : ""}</div>`;
+  const m = S.menu, cfg = m.config || {}, hoy = isoLocal(new Date());
+  const despensa = [cfg.nevera ? `<p class="small" style="margin:0"><b>Nevera:</b> ${esc(cfg.nevera)}</p>` : "", cfg.congelador ? `<p class="small" style="margin:4px 0 0"><b>Congelador:</b> ${esc(cfg.congelador)}</p>` : ""].join("");
+  return head + `<div class="dhead"><span class="lbl">Del ${esc(fmtDay(m.inicio))} al ${esc(fmtDay(addDays(m.inicio, 6)))}</span><h1>Menú semanal</h1>
+      ${m.generadoCon === "local" ? `<p>Reparto automático sin IA</p>` : ""}</div>
+    <section class="panel"><div class="phead"><h2>Equilibrio</h2><span class="small muted">platos en la semana</span></div>
+      ${balanceHTML(m)}${m.equilibrio ? `<p class="small" style="margin:10px 0 0">${esc(m.equilibrio)}</p>` : ""}
+      <p class="small muted" style="margin:6px 0 0">Orientación semanal de la AESAN para adultos.</p></section>
+    ${despensa ? `<section class="panel">${despensa}</section>` : ""}
+    <div class="week">${(m.dias||[]).map((d,i) => `<section class="day${d.fecha === hoy ? " today" : ""}"><h3>${DIAS[i]} <span class="small muted">${esc(fmtDay(d.fecha))}${d.fecha === hoy ? " · hoy" : ""}</span></h3>${slotHTML(m,d,i,"comida")}${slotHTML(m,d,i,"cena")}</section>`).join("")}</div>
+    ${batchHTML(m)}${shopHTML(m)}`;
+}
+function menuMenuSheet(){
+  openSheet(`<h2>Menú semanal</h2><div class="menu">
+    ${S.canWrite ? `<button data-act="mSetup">Preparar otro menú<span>Rehace la semana con las opciones que elijas</span></button>` : ""}
+    <button data-act="mCopyMenu">Copiar menú como texto<span>Para mandarlo por WhatsApp</span></button>
+    <button data-act="mCopyShop">Copiar lista de la compra</button>
+    ${S.canWrite ? `<button data-act="mDelete" style="color:var(--danger)">Borrar menú</button>` : ""}
+  </div>`);
+}
+function menuEditSheet(d, m){
+  S.mEdit = {d, m};
+  const cur = S.menu.dias[d] && S.menu.dias[d][m];
+  const per = cur ? slotPers(S.menu, cur) : ((S.menu.config && S.menu.config.personas) || 4);
+  const earlier = [];
+  for (let i = Math.max(0, d - 2); i <= d; i++) MEALS.forEach(mm => {
+    if (i === d && (mm === m || m === "comida")) return;
+    const x = S.menu.dias[i] && S.menu.dias[i][mm];
+    if (x && x.receta_id && x.tipo === "receta" && getR(x.receta_id) && !earlier.includes(x.receta_id)) earlier.push(x.receta_id);
+  });
+  const cands = menuCands().slice().sort((a,b) => a.titulo.localeCompare(b.titulo, "es"));
+  openSheet(`<h2>${DIAS[d]} · ${m === "comida" ? "Comida" : "Cena"}</h2>
+    <div class="field"><label class="lbl" for="ms-pers">Personas</label><input id="ms-pers" type="number" min="1" max="30" inputmode="numeric" value="${per}" style="max-width:120px"></div>
+    ${earlier.length ? `<div><span class="lbl">Aprovechar sobras</span><div class="chips" style="flex-wrap:wrap;margin-top:6px">${earlier.map(id => `<button class="chip" data-act="mLeft" data-id="${id}">${esc(getR(id).titulo)}</button>`).join("")}</div></div>` : ""}
+    <div class="field"><label class="lbl" for="ms-q">Elegir una receta</label><input id="ms-q" type="search" placeholder="Buscar en el recetario" autocomplete="off"></div>
+    <div class="menu pick" id="ms-list">${cands.map(r => `<button data-act="mPick" data-id="${r.id}" data-s="${esc(deacc(r.titulo.toLowerCase()))}">${esc(r.titulo)}<span>${GRUPOS[grupoDe(r)]}${r.estado !== "probada" ? " · por probar" : ""}${totalMin(r) ? " · " + fmtMin(totalMin(r)) : ""}</span></button>`).join("") || `<p class="hint" style="padding:10px 0">Aún no hay recetas de platos.</p>`}</div>
+    <div class="field"><label class="lbl" for="ms-idea">O escribe un plato</label><input id="ms-idea" class="inp" placeholder="Ensalada de tomate y ventresca">
+      <div class="row-btns" style="margin-top:6px"><button class="btn" data-act="mIdea">Usar este plato</button><button class="btn" data-act="mFrozen">Es del congelador</button></div></div>
+    <div class="row-btns"><button class="btn" data-act="mFree">Libre o fuera</button><button class="btn" data-act="mNone">No coméis en casa</button></div>`);
+}
+function setSlot(val){
+  const {d, m} = S.mEdit;
+  const pe = $("#ms-pers");
+  if (val) val.personas = Math.max(1, Math.min(30, parseInt(pe && pe.value, 10) || 4));
+  const dias = JSON.parse(JSON.stringify(S.menu.dias));
+  dias[d][m] = val;
+  closeSheet();
+  return menuPatch({dias});
+}
+function menuText(menu){
+  const L = [`MENÚ · semana del ${fmtDay(menu.inicio)}`];
+  (menu.dias||[]).forEach((d, i) => {
+    const p = [];
+    MEALS.forEach(m => { const x = d[m]; if (x) p.push(`${m}: ${x.tipo === "sobras" ? "sobras de " : ""}${x.titulo}${x.tipo === "congelado" ? " (del congelador)" : ""}${x.batch ? " (batch)" : ""} [${slotPers(menu, x)}]`); });
+    if (p.length) L.push(`${DIAS[i]} ${fmtDay(d.fecha)} · ${p.join(" | ")}`);
+  });
+  if (menu.batch && (menu.batch.pasos||[]).length){
+    L.push("", `BATCH COOKING · ${batchLabel(menu.config)}`);
+    menu.batch.pasos.forEach((x, i) => L.push(`${i+1}. ${x.texto}`));
+  }
+  return L.join("\n");
+}
+function shopText(menu){
+  const {items, ideas, enCasa} = shopping(menu);
+  const line = it => { const q = qtyOf(it); return q === "al gusto" ? `- ${it.nombre} (al gusto)` : `- ${[q, it.nombre].filter(Boolean).join(" ")}`; };
+  return ["LISTA DE LA COMPRA", ...items.map(line), ...(ideas.length ? ["", "Para las ideas:", ...ideas.map(line)] : []), ...(enCasa.length ? ["", "Comprobar en casa:", ...enCasa.map(line)] : [])].join("\n");
+}
+const MENU_ACT = {
+  openMenu(){ closeSheet(); go("menu"); },
+  menuMenu(){ menuMenuSheet(); },
+  mSetup(){ closeSheet(); menuSetupSheet(); },
+  mPreset(b){
+    const p = b.dataset.p, n = Math.max(1, parseInt($("#m-pers").value, 10) || 4);
+    S.mcfg.slots = DIAS.map((_, i) => ({comida: (p === "todo" || (p === "finde" && i >= 5)) ? n : 0, cena: n}));
+    $("#m-slots").innerHTML = slotGridHTML(S.mcfg);
+  },
+  mEdit(b){ menuEditSheet(+b.dataset.d, b.dataset.m); },
+  mPick(b){ const r = getR(b.dataset.id); if (r) setSlot({tipo:"receta", receta_id:r.id, titulo:r.titulo, grupo:grupoDe(r), batch:false, nota:""}); },
+  mLeft(b){ const r = getR(b.dataset.id); if (r) setSlot({tipo:"sobras", receta_id:r.id, titulo:r.titulo, grupo:grupoDe(r), batch:false, nota:"Haced ración doble cuando la cocinéis"}); },
+  mIdea(){ const t = $("#ms-idea").value.trim(); if (!t){ toast("Escribe el plato"); return; } setSlot({tipo:"idea", receta_id:null, titulo:t, grupo:grupoDe({titulo:t, ingredientes:[]}, "otro"), batch:false, nota:""}); },
+  mFrozen(){ const t = $("#ms-idea").value.trim(); if (!t){ toast("Escribe qué plato es"); return; } setSlot({tipo:"congelado", receta_id:null, titulo:t, grupo:grupoDe({titulo:t, ingredientes:[]}, "otro"), batch:false, nota:"Sacar del congelador la noche antes"}); },
+  mFree(){ setSlot(LIBRE()); },
+  mNone(){ setSlot(null); },
+  mOpen(b){ S.backTo = "menu"; go("detail", b.dataset.id); },
+  mShop(b){ b.closest(".ing")?.classList.toggle("done", b.checked); menuPatch({compra: {[b.dataset.k]: b.checked}}); },
+  mBatchStep(b){ b.closest(".ing")?.classList.toggle("done", b.checked); menuPatch({batchHecho: {[b.dataset.i]: b.checked}}); },
+  mCopyMenu(){ if (S.menu) copyText(menuText(S.menu)); closeSheet(); },
+  mCopyShop(){ if (S.menu) copyText(shopText(S.menu)); closeSheet(); },
+  mDelete(){
+    closeSheet();
+    confirmSheet("¿Borrar el menú?", "Se borra el menú de la semana para toda la familia. Las recetas no se tocan.", "Borrar menú", async () => {
+      try { await S.db.doc("menus/actual").delete(); closeSheet(); toast("Menú borrado"); } catch(e){ closeSheet(); toast(dbErr(e)); }
+    }, true);
+  }
+};
+
+
+/* ---------- Cocina y aparatos ---------- */
+function filtersSheet(){
+  const base = S.recetas.filter(r => matches(r, S.q) && (!S.cat || r.categoria === S.cat));
+  const count = (k, v) => base.filter(r => k === "fCocina" ? r.cocina === v : (r.utensilios||[]).includes(v)).length;
+  const cocinas = [...new Set(COCINAS.concat(base.map(r => r.cocina).filter(Boolean)))].filter(c => count("fCocina", c));
+  const utens = [...new Set(UTENSILIOS.concat(base.flatMap(r => r.utensilios || [])))].filter(u => count("fUtens", u));
+  const grp = (k, vals, title) => `<div><span class="lbl">${title}</span><div class="chips" style="flex-wrap:wrap;margin-top:6px">${vals.length ? vals.map(v => `<button class="chip" data-act="setF" data-f="${k}" data-v="${esc(v)}" aria-pressed="${S[k] === v}">${esc(v)} <span class="muted">${count(k, v)}</span></button>`).join("") : `<span class="hint">Aún no hay recetas con este dato.</span>`}</div></div>`;
+  openSheet(`<h2>Cocina y aparatos</h2>${grp("fCocina", cocinas, "Cocina")}${grp("fUtens", utens, "Aparato o utensilio")}
+    ${S.recetas.some(r => r.cocina === undefined) && S.canWrite ? `<p class="hint">Hay recetas sin clasificar. Usa "Clasificar por cocina y aparatos" en el menú ⋯ del recetario.</p>` : ""}
+    <button class="btn primary block" data-act="closeSheet">Ver ${filtered().list.length} recetas</button>`);
+}
+function classifySheet(){
+  const pend = S.recetas.filter(r => r.cocina === undefined || r.utensilios === undefined);
+  openSheet(`<h2>Clasificar recetas</h2>
+    <p class="hint">${pend.length ? `${pend.length} ${pend.length === 1 ? "receta no tiene" : "recetas no tienen"} cocina ni aparatos. ${S.sample ? "La IA las clasificará leyendo ingredientes y pasos." : "Se detectarán los aparatos que aparezcan en los pasos (Thermomix, horno, olla lenta…). La cocina, ponla a mano."} Después puedes corregir cualquiera en Editar.` : "Todas las recetas están clasificadas."}</p>
+    <div id="cl-status"></div>
+    ${pend.length ? `<button class="btn primary block" id="cl-go">Clasificar ${pend.length} ${pend.length === 1 ? "receta" : "recetas"}</button>` : ""}`,
+  sh => { const b = $("#cl-go", sh); if (b) b.onclick = () => runClassify(sh, pend); });
+}
+async function runClassify(sh, pend){
+  const st = $("#cl-status", sh), btn = $("#cl-go", sh);
+  btn.disabled = true;
+  const res = {};
+  pend.forEach(r => { res[r.id] = {cocina: r.cocina ?? null, utensilios: r.utensilios || detectUtens([r.titulo, ...(r.pasos||[]).map(x => x.texto)].join(" "))}; });
+  if (S.sample){
+    const ctl = new AbortController(); S.aiCtl = ctl;
+    try {
+      for (let i = 0; i < pend.length; i += 40){
+        const chunk = pend.slice(i, i + 40);
+        st.innerHTML = `<div class="status"><span class="spin"></span>La IA está clasificando ${Math.min(i + 40, pend.length)} de ${pend.length}…</div>`;
+        const data = chunk.map(r => ({id: r.id, titulo: r.titulo, ingredientes: (r.ingredientes||[]).map(x => x.nombre).slice(0, 20), pasos: (r.pasos||[]).map(x => x.texto).join(" ").slice(0, 700)}));
+        const out = await S.sample.json(`Clasifica estas recetas de un recetario familiar español.
+Para cada una indica:
+- "cocina": una de ${JSON.stringify(COCINAS)}, o null si no es claro. Usa "Gallega" para platos típicos gallegos y "Española" para el resto de platos tradicionales de España.
+- "utensilios": los aparatos que la receta necesita de verdad, de esta lista: ${JSON.stringify(UTENSILIOS)}. Lista vacía si basta con fuego y una sartén u olla normal.
+Responde SOLO con JSON: {"clasificacion": [{"id": "...", "cocina": "..." , "utensilios": []}]}
+
+RECETAS:
+${JSON.stringify(data)}`, {signal: ctl.signal, modelTier: "quick"});
+        (out && Array.isArray(out.clasificacion) ? out.clasificacion : []).forEach(c => {
+          if (!c || !res[c.id]) return;
+          res[c.id].cocina = normList(c.cocina, COCINAS);
+          if (Array.isArray(c.utensilios)) res[c.id].utensilios = [...new Set(c.utensilios.map(u => detectUtens(u)[0] || normList(u, UTENSILIOS)).filter(Boolean))];
+        });
+      }
+    } catch(e){
+      if (e && e.code === "cancelled"){ S.aiCtl = null; btn.disabled = false; st.innerHTML = ""; return; }
+      st.innerHTML = `<p class="err">La IA no pudo terminar; se guardan los aparatos detectados en los pasos.</p>`;
+    }
+    S.aiCtl = null;
+  }
+  let n = 0;
+  try {
+    for (const r of pend){
+      st.innerHTML = `<div class="status"><span class="spin"></span>Guardando ${++n} de ${pend.length}…</div>`;
+      await S.db.doc("recetas/" + r.id).update({cocina: res[r.id].cocina, utensilios: res[r.id].utensilios});
+    }
+    closeSheet(); toast(`${pend.length} ${pend.length === 1 ? "receta clasificada" : "recetas clasificadas"}`);
+  } catch(e){ btn.disabled = false; st.innerHTML = `<p class="err">${esc(dbErr(e))}</p>`; }
+}
+
+/* ---------- Versión independiente: ajustes, copias y fusión ---------- */
+function relTime(t){
+  if (!t) return "";
+  const m = Math.round((Date.now() - t) / 60000);
+  if (m < 1) return "ahora mismo";
+  if (m < 60) return `hace ${m} min`;
+  const d = new Date(t);
+  return d.toDateString() === new Date().toDateString() ? `a las ${d.toLocaleTimeString("es-ES", {hour: "2-digit", minute: "2-digit"})}` : d.toLocaleDateString("es-ES", {day: "numeric", month: "short"});
+}
+function syncLabel(){
+  const sy = window.__sync;
+  if (!sy || !sy.connected()) return "Las recetas de la familia, juntas y ordenadas";
+  const st = sy.status();
+  const donde = sy.info().prov === "carpeta" ? "en la carpeta" : "en Dropbox";
+  if (st.state === "busy") return `Guardando ${donde}…`;
+  if (st.state === "error") return "Sin guardar: toca ⚙ para ver por qué";
+  const t = st.at || sy.info().lastSync;
+  return t ? `Guardado ${donde} ${relTime(t)}` : `Conectado ${donde}`;
+}
+function syncBoxHTML(){
+  const sy = window.__sync, info = sy.info(), st = sy.status(), fixed = sy.fixedKey();
+  if (sy.connected() && info.prov === "carpeta") return `<span class="lbl">Guardar en una carpeta del móvil</span>
+    <p class="small" style="margin:0">Conectado a la carpeta <b>${esc(info.name)}</b> (archivo recetario.json y subcarpeta fotos).</p>
+    <p class="small ${st.state === "error" ? "err" : "muted"}" id="sy-status" style="margin:0">${esc(st.state === "error" ? st.msg : syncLabel())}</p>
+    <div class="row-btns">${st.state === "error" && /permiso/.test(st.msg || "") ? `<button class="btn primary" data-act="syncGrant">Dar acceso a la carpeta</button>` : ""}<button class="btn" data-act="syncNow">Guardar ahora</button><button class="btn" data-act="syncOff">Desconectar</button></div>`;
+  if (sy.connected()) return `<span class="lbl">Guardar en Dropbox</span>
+    <p class="small" style="margin:0">Conectado. Archivo: <b>${esc(info.path)}/recetario.json</b></p>
+    <p class="small ${st.state === "error" ? "err" : "muted"}" id="sy-status" style="margin:0">${esc(st.state === "error" ? st.msg : syncLabel())}</p>
+    <div class="row-btns"><button class="btn" data-act="syncNow">Sincronizar ahora</button><button class="btn" data-act="syncOff">Desconectar</button></div>`;
+  return `<span class="lbl">Guardar en Dropbox</span>
+    <p class="hint">Las recetas se guardan en el archivo recetario.json dentro de la carpeta que elijas, con las fotos en una subcarpeta. Si compartes esa carpeta en Dropbox con la familia, todos usáis el mismo recetario.</p>
+    ${fixed ? "" : `<label class="lbl" for="sy-key">Clave de la app de Dropbox (App key)</label><input id="sy-key" class="inp" autocomplete="off" value="${esc(info.appKey)}">`}
+    <label class="lbl" for="sy-path">Carpeta en Dropbox</label><input id="sy-path" class="inp" value="${esc(info.path)}">
+    ${st.state === "error" ? `<p class="err" style="margin:0">${esc(st.msg)}</p>` : ""}
+    <button class="btn primary" data-act="syncConnect">Conectar con Dropbox</button>
+    <span class="lbl" style="margin-top:12px">O guardar en una carpeta del móvil</span>
+    ${sy.folderSupported()
+      ? `<p class="hint">Elige una carpeta (por ejemplo, Documentos/Recetario). La app guarda ahí recetario.json y las fotos. Si esa carpeta la sincroniza otra app (Google Drive, OneDrive…), las recetas también estarán en la nube.</p>
+         <button class="btn" data-act="syncFolder">Elegir carpeta</button>`
+      : `<p class="hint">Este navegador no deja usar carpetas del móvil (pasa en iPhone y en Firefox). Usa Dropbox o, en Android, abre la app con Chrome.</p>`}`;
+}
+window.addEventListener("recetario-sync", () => {
+  const l = document.getElementById("syncline"); if (l) l.textContent = syncLabel();
+  const b = document.getElementById("sy-box"); if (b && !b.contains(document.activeElement)) b.innerHTML = syncBoxHTML();
+});
+setInterval(() => { const l = document.getElementById("syncline"); if (l) l.textContent = syncLabel(); }, 60000);
+function aiErrMsg(e){
+  const c = e && e.code;
+  return {bad_key: "La clave no es válida. Cópiala de nuevo, sin espacios.",
+    bad_model: "Ese modelo no existe. Deja el campo «Modelo» vacío para usar el recomendado.",
+    rate_limited: "Has llegado al límite de uso de la IA. Prueba dentro de un rato.",
+    network: "No hay conexión a internet o la IA no responde.",
+    not_granted: "Configura una IA en Ajustes o escribe la receta a mano.",
+    invalid_json: "La IA no ha contestado bien. Vuelve a intentarlo."}[c] || ("La IA ha dado un error" + (e && e.message ? ": " + e.message : "."));
+}
+function settingsSheet(){
+  const c = window.__aiCfg();
+  openSheet(`<h2>Ajustes</h2>
+    <div class="field"><label class="lbl" for="st-name">Tu nombre</label><input id="st-name" class="inp" value="${esc(window.__nombre() || "")}" placeholder="Javier"><span class="hint">Aparece junto a tus notas cuando compartís el recetario.</span></div>
+    <div class="field"><label class="lbl" for="st-prov">Inteligencia artificial</label><select id="st-prov" class="inp">
+      <option value="">Sin IA (usar «Copiar con el prompt»)</option>
+      <option value="gemini">Gemini de Google (tiene uso gratuito)</option>
+      <option value="openai">ChatGPT (OpenAI, de pago)</option>
+      <option value="anthropic">Claude (Anthropic, de pago)</option></select></div>
+    <div id="st-aiopts">
+      <div class="field"><label class="lbl" for="st-key">Clave de API</label><input id="st-key" class="inp" type="password" autocomplete="off" value="${esc(c.key || "")}"><span class="hint" id="st-help"></span></div>
+      <div class="field"><label class="lbl" for="st-model">Modelo (opcional)</label><input id="st-model" class="inp" value="${esc(c.model || "")}"></div>
+    </div>
+    <div id="st-status"></div>
+    <button class="btn primary block" id="st-save">Guardar</button>
+    <div class="field" id="sy-box" style="border-top:1px solid var(--line);padding-top:14px;margin-top:4px">${syncBoxHTML()}</div>
+    <div class="menu">
+      <button data-act="backup">Compartir el recetario completo<span>Un archivo con todas las recetas, notas y fotos: para la familia o como copia de seguridad</span></button>
+      <button data-act="import">Importar o fusionar<span>Recetas sueltas o el recetario completo de otra persona</span></button>
+    </div>
+    <p class="hint">La clave de la IA se guarda solo en este móvil. Si no conectas Dropbox, las recetas también; en ese caso haz de vez en cuando una copia con «Compartir el recetario completo».</p>`,
+  sh => {
+    const prov = $("#st-prov", sh); prov.value = c.prov || "";
+    const help = {
+      gemini: `Consíguela gratis en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> entrando con tu Gmail.`,
+      openai: `En <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a>. Se paga aparte de ChatGPT Plus.`,
+      anthropic: `En <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>. Se paga aparte de la suscripción a Claude.`};
+    const upd = () => { $("#st-aiopts", sh).hidden = !prov.value; $("#st-help", sh).innerHTML = help[prov.value] || ""; $("#st-model", sh).placeholder = window.__defModel[prov.value] || ""; };
+    prov.onchange = upd; upd();
+    $("#st-save", sh).onclick = async () => {
+      window.__setNombre($("#st-name", sh).value);
+      S.uid = window.__nombre();
+      const cfg = {prov: prov.value, key: $("#st-key", sh).value.trim(), model: $("#st-model", sh).value.trim()};
+      window.__setAiCfg(cfg);
+      const st = $("#st-status", sh), b = $("#st-save", sh);
+      if (cfg.prov && cfg.key){
+        b.disabled = true; st.innerHTML = `<div class="status"><span class="spin"></span>Probando la IA…</div>`;
+        try {
+          const r = await window.__sample.json('Responde solo con este JSON: {"ok": true}');
+          if (!r || r.ok !== true) throw {code: "invalid_json"};
+          S.sample = window.__sample; S.canImages = true; closeSheet(); toast("Guardado. La IA funciona"); go(S.view === "edit" ? "list" : S.view, S.currentId);
+        } catch(e){ S.sample = null; b.disabled = false; st.innerHTML = `<p class="err">${esc(aiErrMsg(e))}</p>`; }
+      } else { S.sample = null; S.canImages = false; closeSheet(); toast("Guardado"); go(S.view === "edit" ? "list" : S.view, S.currentId); }
+    };
+  });
+}
+async function blobIdToDataURL(id){
+  if (!id || !window.__hasBlob(id)) return null;
+  try { return await blobToDataURL(await (await fetch(window.__blobURL(id))).blob()); } catch(e){ return null; }
+}
+async function exportBackup(){
+  closeSheet(); toast("Preparando el archivo…");
+  const recetas = [];
+  for (const r of S.recetas){
+    const fotos_data = [];
+    for (const id of (r.fotos || [])){ const d = await blobIdToDataURL(id); if (d) fotos_data.push({id, data: d}); }
+    const pasos = [];
+    for (const p of (r.pasos || [])){ const q = {...p}; if (p.foto){ const d = await blobIdToDataURL(p.foto); if (d) q.foto_data = d; } pasos.push(q); }
+    recetas.push({...r, pasos, fotos_data});
+  }
+  const data = {formato: "recetario-copia-v1", exportado: new Date().toISOString(), de: S.uid || null, recetas, menu: S.menu || null};
+  await saveFile(`recetario-${slug(S.uid || "familia")}-${today()}.json`, JSON.stringify(data));
+}
+async function mergeBackup(full, withMenu){
+  let nuevas = 0, act = 0;
+  for (const rr of (full.recetas || [])){
+    if (!rr || !rr.id || !rr.titulo || !/^[A-Za-z0-9_\-.~:@+]{1,200}$/.test(rr.id)) continue;
+    const {fotos_data, ...r} = rr;
+    for (const f of (fotos_data || [])) if (f && f.id && typeof f.data === "string" && f.data.startsWith("data:image/")) await window.__assets.putWithId(f.id, await dataURLToBlob(f.data));
+    r.fotos = (r.fotos || []).filter(id => window.__hasBlob(id));
+    const pasos = [];
+    for (const p of (rr.pasos || [])){
+      const {foto_data, ...q} = p || {};
+      if (q.foto && typeof foto_data === "string" && foto_data.startsWith("data:image/")) await window.__assets.putWithId(q.foto, await dataURLToBlob(foto_data));
+      if (q.foto && !window.__hasBlob(q.foto)) delete q.foto;
+      pasos.push(q);
+    }
+    r.pasos = pasos;
+    const local = getR(r.id);
+    const val = {...((local && local.valoraciones) || {}), ...(r.valoraciones || {})};
+    const ref = S.db.doc("recetas/" + r.id);
+    if (!local){ await ref.set({...r, valoraciones: val, id: undefined}); nuevas++; }
+    else if (String(r.actualizadaEn || "") > String(local.actualizadaEn || "")){ await ref.set({...r, valoraciones: val, favorita: !!local.favorita, id: undefined}); act++; }
+    else if (JSON.stringify(val) !== JSON.stringify(local.valoraciones || {})){ await ref.update({valoraciones: val}); act++; }
+  }
+  if (withMenu && full.menu && typeof full.menu === "object") await S.db.doc("menus/actual").set(full.menu);
+  return {nuevas, act};
+}
+function mergePreview(sh, full){
+  const out = $("#imp-out", sh);
+  const rs = (full.recetas || []).filter(r => r && r.id && r.titulo);
+  const nuevas = rs.filter(r => !getR(r.id)).length;
+  out.innerHTML = `<p style="margin:0"><b>Recetario completo${full.de ? " de " + esc(full.de) : ""}</b> · ${rs.length} ${rs.length === 1 ? "receta" : "recetas"}</p>
+    <p class="hint">${nuevas} ${nuevas === 1 ? "es nueva" : "son nuevas"} para ti. Las que ya tienes se actualizan si su versión es más reciente, y se juntan las notas de todos.</p>
+    ${full.menu ? `<label class="check" for="mg-menu"><input type="checkbox" id="mg-menu">Usar también su menú semanal</label>` : ""}
+    <button class="btn primary block" id="mg-go" style="margin-top:8px">Fusionar con mi recetario</button>`;
+  $("#mg-go", sh).onclick = async () => {
+    const b = $("#mg-go", sh); b.disabled = true; b.textContent = "Fusionando…";
+    try { const r = await mergeBackup(full, $("#mg-menu", sh) && $("#mg-menu", sh).checked); S.impRaw = null; closeSheet(); toast(`${r.nuevas} nuevas y ${r.act} actualizadas`); go("list"); }
+    catch(e){ b.disabled = false; b.textContent = "Fusionar con mi recetario"; out.insertAdjacentHTML("beforeend", `<p class="err">No se pudo fusionar. ${esc(e && e.message || "")}</p>`); }
+  };
+}
+function handleShareTarget(){
+  try {
+    const qp = new URLSearchParams(location.search);
+    const t = [qp.get("title"), qp.get("text")].filter(Boolean).join("\n").trim();
+    let u = qp.get("url") || "";
+    if (!u){ const m = t.match(/https?:\/\/\S+/); if (m) u = m[0]; }
+    if (t || u){ history.replaceState(null, "", location.pathname); addSheet({text: t, url: u}); }
+  } catch(e){}
+}
+const EXTRA_ACT = {
+  settings(){ closeSheet(); settingsSheet(); },
+  backup(){ exportBackup(); },
+  syncConnect(){
+    const key = window.__sync.fixedKey() || (($("#sy-key") && $("#sy-key").value) || "").trim();
+    const path = (($("#sy-path") && $("#sy-path").value) || "").trim();
+    if (!key){ toast("Falta la clave de la app de Dropbox"); return; }
+    window.__sync.connect(key, path);
+  },
+  syncNow(){ window.__sync.runNow(); toast("Guardando…"); },
+  async syncFolder(){
+    try { const ok = await window.__sync.pickFolder(); if (ok){ toast("Carpeta conectada"); const b = $("#sy-box"); if (b) b.innerHTML = syncBoxHTML(); } }
+    catch(e){ toast("No se pudo usar esa carpeta. Prueba con otra, por ejemplo dentro de Documentos."); }
+  },
+  async syncGrant(){ const ok = await window.__sync.grant(); toast(ok ? "Acceso concedido" : "Sin permiso para la carpeta"); },
+  syncOff(){
+    confirmSheet("¿Desconectar?", "Las recetas se quedan en este móvil, pero dejarán de guardarse fuera de él hasta que vuelvas a conectar.", "Desconectar", async () => { window.__sync.disconnect(); closeSheet(); toast("Desconectado"); }, true);
+  }
+};
+
+/* ---------- Acciones ---------- */
+const ACT = {
+  closeSheet, mainMenu, recipeMenu,
+  add(){ closeSheet(); addSheet(); },
+  import(){ closeSheet(); importSheet(); },
+  promptIA(){ closeSheet(); promptSheet(); },
+  copyPrompt(){ copyText(PROMPT_IA, $("#promptCopy")); },
+  manual(){ closeSheet(); openEditor(normReceta({}), true); },
+  manualPre(){
+    const t = (($("#ai-text") && $("#ai-text").value) || "").trim(), u = (($("#ai-url") && $("#ai-url").value) || "").trim();
+    closeSheet(); openEditor(normReceta({notas: t, fuente: {tipo: tipoFromUrl(u), url: u || null}}), true);
+  },
+  saveLinks(){ saveLinks(); },
+  tab(b){ S.tab = b.dataset.tab; savePrefs(); updateList(); },
+  cat(b){ S.cat = b.dataset.cat || null; updateList(); },
+  open(b){ S.backTo = "list"; go("detail", b.dataset.id); },
+  back(){ if (S.view === "detail" && S.backTo === "menu") go("menu"); else go("list"); },
+  edit(){ closeSheet(); const r = getR(S.currentId); if (r) openEditor(JSON.parse(JSON.stringify(r)), false); },
+  cancelEdit(){
+    const d = S.draft;
+    const added = d ? d.fotos.filter(id => !(d.base.fotos||[]).includes(id)).concat(d.added || []) : [];
+    if (S.assets && d) added.forEach(id => S.assets.delete(id).catch(()=>{}));
+    const back = d && d.id; S.draft = null; go(back ? "detail" : "list", back || undefined);
+  },
+  async fav(){ const r = getR(S.currentId); if (!r) return; try { await updateRecipe(r.id, {favorita: !r.favorita}); } catch(e){ toast(dbErr(e)); } },
+  serv(b){ const r = getR(S.currentId); if (!r) return; const cur = servingsFor(r); const step = r.raciones ? 1 : .5; S.servings[r.id] = Math.max(step, cur + (+b.dataset.d)*step); render(); },
+  check(b){ S.checked[b.dataset.k] = b.checked; b.closest(".ing")?.classList.toggle("done", b.checked); },
+  timer(b){ startTimer(parseFloat(b.dataset.min), b.dataset.label); },
+  stopTimer(b){ S.timers = S.timers.filter(t => String(t.id) !== b.dataset.id); renderTimers(); },
+  async rate(b){ const r = getR(S.currentId); if (!r || !S.uid) return; try { await updateRecipe(r.id, {valoraciones: {[S.uid]: +b.dataset.n}}); toast("Nota guardada"); } catch(e){ toast(dbErr(e)); } },
+  markTried(){
+    const r = getR(S.currentId); if (!r) return;
+    let n = 0;
+    openSheet(`<h2>¿Qué tal salió?</h2>
+      ${S.uid ? `<div><span class="lbl">Tu nota</span><br><div id="mt-stars">${starsInput(0, "mtStar")}</div></div>` : `<p class="hint">Pon tu nombre en <button class="linkbtn" data-act="settings">Ajustes</button> para dar nota.</p>`}
+      <div class="field"><label class="lbl" for="mt-date">Fecha</label><input id="mt-date" type="date" value="${today()}"></div>
+      <div class="field"><label class="lbl" for="mt-nv">Nuestra versión (opcional)</label><textarea id="mt-nv" rows="3" placeholder="Qué cambiaríais la próxima vez">${esc(r.nuestraVersion||"")}</textarea></div>
+      <button class="btn ok block" id="mt-save">Guardar como probada</button>`, sh => {
+        sh.addEventListener("click", e => { const s = e.target.closest("[data-act=mtStar]"); if (!s) return; e.stopPropagation(); n = +s.dataset.n; $("#mt-stars", sh).innerHTML = starsInput(n, "mtStar"); });
+        $("#mt-save", sh).onclick = async () => {
+          const patch = {estado:"probada", probadaEn: $("#mt-date", sh).value || today(), nuestraVersion: $("#mt-nv", sh).value.trim()};
+          if (n && S.uid) patch.valoraciones = {[S.uid]: n};
+          $("#mt-save", sh).disabled = true;
+          try { await updateRecipe(r.id, patch); closeSheet(); if (S.cookOpen) closeCook(); toast("Pasa a Probadas"); } catch(e){ $("#mt-save", sh).disabled = false; toast(dbErr(e)); }
+        };
+      });
+  },
+  mtStar(){},
+  async untry(){ closeSheet(); const r = getR(S.currentId); if (!r) return; try { await updateRecipe(r.id, {estado:"por_probar"}); } catch(e){ toast(dbErr(e)); } },
+  delete(){
+    const r = getR(S.currentId); if (!r) return;
+    closeSheet();
+    confirmSheet("¿Eliminar esta receta?", `"${r.titulo}" se borrará para toda la familia, con sus fotos. No se puede deshacer.`, "Eliminar", async () => {
+      try { await S.db.doc("recetas/"+r.id).delete(); if (S.assets) for (const a of (r.fotos||[])) { try { await S.assets.delete(a); } catch(e){} }
+        closeSheet(); toast("Receta eliminada"); go("list"); } catch(e){ closeSheet(); toast(dbErr(e)); }
+    }, true);
+  },
+  copyRecipe(){ const r = getR(S.currentId); if (r) { copyText(recipeText(r)); closeSheet(); } },
+  exportOne(b){ const r = getR(S.currentId); if (r) doExport([r], b.dataset.fmt, r.titulo); },
+  exportAll(b){ const {list} = filtered(); const t = S.tab === "probadas" ? "Recetas probadas" : S.tab === "por_probar" ? "Recetas por probar" : S.tab === "favoritas" ? "Recetas favoritas" : "Recetario da Casa"; doExport(list, b.dataset.fmt, S.cat ? `${t} · ${CATS[S.cat]}` : t); },
+  setEstado(b){ S.draft.estado = b.dataset.v; $$("#e-estado button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.v === S.draft.estado))); },
+  addIng(){ $("#ing-list").insertAdjacentHTML("beforeend", ingRow({})); $("#ing-list .irow:last-child .i-cant").focus(); },
+  addGrp(){ $("#ing-list").insertAdjacentHTML("beforeend", grpRow("")); $("#ing-list .irow:last-child input").focus(); },
+  addStep(){ $("#step-list").insertAdjacentHTML("beforeend", stepRow({})); $("#step-list .prow:last-child textarea").focus(); },
+  delRow(b){ const row = b.closest(".irow,.prow"); if (row && S.draft && row.classList.contains("prow")) ["foto"].forEach(k => { if (row.dataset[k]) S.draft.removed.push(row.dataset[k]); }); row?.remove(); },
+  rmStepMedia(b){ const row = b.closest(".prow"), k = b.dataset.k; if (!row) return; if (row.dataset[k] && S.draft) S.draft.removed.push(row.dataset[k]); row.dataset[k] = ""; $(".pmedia", row).innerHTML = stepMediaHTML({foto: row.dataset.foto}); },
+  filters(){ filtersSheet(); },
+  setF(b){ const k = b.dataset.f, v = b.dataset.v; S[k] = S[k] === v ? null : v; updateList(); filtersSheet(); },
+  clrF(b){ S[b.dataset.f] = null; updateList(); },
+  tUtens(b){ const u = b.dataset.u, a = S.draft.utensilios; const i = a.indexOf(u); if (i >= 0) a.splice(i, 1); else a.push(u); b.setAttribute("aria-pressed", String(i < 0)); },
+  classify(){ closeSheet(); classifySheet(); },
+  heroPick(b){ const h = $("#hero"); if (h) h.src = blobUrl(b.dataset.id); },
+  rmPhoto(b){ const d = S.draft; d.fotos = d.fotos.filter(x => x !== b.dataset.id); d.removed.push(b.dataset.id); $("#photos").innerHTML = photosHTML(); },
+  cook(){ openCook(); },
+  closeCook(){ closeCook(); },
+  cookIngs(){ S.cookIngs = !S.cookIngs; renderCook(); },
+  cookPrev(){ if (S.cookIngs){ S.cookIngs = false; } else S.cookStep = Math.max(0, S.cookStep-1); renderCook(); },
+  cookNext(){ if (S.cookIngs){ S.cookIngs = false; } else { const r = getR(S.currentId); S.cookStep = Math.min((r.pasos||[]).length, S.cookStep+1); } renderCook(); }
+};
+Object.assign(ACT, MENU_ACT, EXTRA_ACT);
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]");
+  if (!b || b.tagName === "INPUT" && b.type === "file") return;
+  const fn = ACT[b.dataset.act]; if (!fn) return;
+  if (b.tagName !== "INPUT") e.preventDefault();
+  fn(b, e);
+});
+document.addEventListener("change", async e => {
+  const t = e.target;
+  if (t.id === "sort"){ S.sort = t.value; savePrefs(); updateList(); }
+  if (t.dataset && t.dataset.slot && S.mcfg){ const [i, m] = t.dataset.slot.split("-"); S.mcfg.slots[+i][m] = +t.value; t.classList.toggle("off", !+t.value); }
+  if (t.dataset && t.dataset.stepMedia && t.files.length){
+    const row = t.closest(".prow"), k = t.dataset.stepMedia, f = t.files[0], box = $(".pmedia", row);
+    box.insertAdjacentHTML("beforeend", `<span class="status small"><span class="spin"></span>Subiendo…</span>`);
+    try {
+      const id = await uploadImage(f);
+      row.dataset[k] = id; if (S.draft) S.draft.added.push(id);
+    } catch(err){ toast(err && err.code === "too_large" ? "El archivo es demasiado grande" : err && err.code === "quota_or_state" ? "No queda espacio para archivos" : "No se pudo subir el archivo"); }
+    box.innerHTML = stepMediaHTML({foto: row.dataset.foto});
+    return;
+  }
+  if (t.id === "ph-in" && t.files.length){
+    const files = Array.from(t.files); const box = $("#photos");
+    box.insertAdjacentHTML("beforeend", `<span class="status small" id="ph-status"><span class="spin"></span>Subiendo…</span>`);
+    for (const f of files){ try { S.draft.fotos.push(await uploadImage(f)); } catch(err){ toast(err.code === "too_large" ? "Foto demasiado grande" : err.code === "quota_or_state" ? "No queda espacio para fotos" : "No se pudo subir la foto"); } }
+    if (S.draft) $("#photos").innerHTML = photosHTML();
+  }
+});
+document.addEventListener("input", e => {
+  if (e.target.id === "q"){ S.q = e.target.value; updateList(); }
+  if (e.target.id === "ms-q"){ const q = deacc(e.target.value.toLowerCase().trim()); $$("#ms-list button").forEach(b => { b.hidden = !!q && !b.dataset.s.includes(q); }); }
+});
+document.addEventListener("submit", e => { if (e.target.id === "editform"){ e.preventDefault(); saveDraft(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape"){ if ($("#overlay").innerHTML) closeSheet(); else if (S.cookOpen) closeCook(); } });
+document.addEventListener("visibilitychange", () => { if (S.cookOpen && document.visibilityState === "visible" && !S.wakeLock) { try { navigator.wakeLock?.request("screen").then(l => S.wakeLock = l).catch(()=>{}); } catch(e){} } });
+
+/* ---------- Arranque ---------- */
+render();
+(async function init(){
+  const use = n => (window.claude && claude.use) ? claude.use(n).catch(() => null) : Promise.resolve(null);
+  const [db, user, assets, sample, downloads] = await Promise.all(["db","user","assets","sample","downloads"].map(use));
+  Object.assign(S, {db, user, assets, sample, downloads});
+  if (user){ try { S.uid = await user.id(); } catch(e){} try { const c = await user.can("data.write"); S.canWrite = c !== false; } catch(e){} }
+  S.uid = window.__nombre();
+  if (sample){ try { const lim = await sample.limits(); S.canImages = !!lim.images; if (lim.images) S.maxImages = Math.min(5, lim.images.maxCount || 5); } catch(e){} }
+  if (!db){ S.noDb = true; S.canWrite = false; S.loaded = true; if (S.view === "list") { $("#view").innerHTML = ""; } render(); return; }
+  if (S.view === "list") $("#view").innerHTML = "";
+  render();
+  const sub = () => db.collection("recetas").onSnapshot(snap => {
+    S.recetas = snap.docs.map(d => ({...d.data(), id: d.id}));
+    S.loaded = true;
+    if (S.view !== "edit") render();
+  }, err => {
+    if (err && err.code === "unavailable") setTimeout(sub, 3000);
+    else { S.loaded = true; S.noDb = err && err.code === "revoked"; render(); }
+  });
+  sub();
+  setTimeout(handleShareTarget, 300);
+  db.doc("menus/actual").onSnapshot(snap => {
+    S.menu = snap.exists ? snap.data() : null; S.menuLoaded = true;
+    if (S.view === "menu") render();
+  }, () => { S.menuLoaded = true; if (S.view === "menu") render(); });
+})();
+</script>
+
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+</script>
+</body>
+</html>
